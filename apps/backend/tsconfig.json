@@ -1,0 +1,28 @@
+{
+    "extends": "../../tsconfig.json",
+    "include": ["src/**/*", "../../packages"],
+    "exclude": [
+        "../../**/*.mts",
+        "../../**/*.mjs",
+        "../frontend",
+        "../../tools",
+        "node_modules",
+        "dist"
+    ],
+    "compilerOptions": {
+        "isolatedModules": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "outDir": "./dist",
+        "baseUrl": ".",
+        "rootDir": "../..",
+
+        "paths": {
+            "@/*": ["./src/*"],
+            "@node/*": ["../../packages/node/*"],
+            "@shared": ["../../packages/shared/index"]
+        }
+    }
+}

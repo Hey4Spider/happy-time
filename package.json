@@ -1,0 +1,38 @@
+{
+    "name": "workspace",
+    "version": "1.0.0",
+    "private": true,
+    "workspaces": [
+        "apps/backend",
+        "apps/frontend",
+        "packages/node",
+        "tools"
+    ],
+    "scripts": {
+        "backend": "npm run dev -w backend",
+        "frontend": "npm run dev -w frontend"
+    },
+    "dependencies": {
+        "@vueuse/core": "^14.3.0",
+        "dotenv": "^17.4.1"
+    },
+    "devDependencies": {
+        "@eslint/css": "^1.2.0",
+        "@eslint/js": "^10.0.1",
+        "@stylistic/eslint-plugin": "^5.10.0",
+        "@types/node": "^25.6.0",
+        "dotenv-cli": "^11.0.0",
+        "eslint": "^10.3.0",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.5",
+        "eslint-plugin-vue": "^10.9.1",
+        "globals": "^17.5.0",
+        "jiti": "^2.6.1",
+        "prettier": "^3.8.3",
+        "prisma": "^7.7.0",
+        "ts-node": "^10.9.2",
+        "tsconfig-paths": "^4.2.0",
+        "typescript": "^6.0.3",
+        "typescript-eslint": "^8.59.3"
+    }
+}

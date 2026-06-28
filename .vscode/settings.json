@@ -1,0 +1,23 @@
+{
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[prisma]": {
+        "editor.defaultFormatter": "Prisma.prisma"
+    },
+    "search.exclude": {
+        "**/.vscode": true,
+        "**/.tmp": true,
+        "**/packages/node/prisma": true,
+        "**/package-lock.json": true
+    },
+    "prisma.hidePrisma6Prompts": true
+}

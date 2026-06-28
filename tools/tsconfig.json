@@ -1,0 +1,19 @@
+{
+    "extends": "../tsconfig.json",
+    "include": ["src/**/*", "../packages"],
+    "exclude": [
+        "../**/*.mts",
+        "../**/*.mjs",
+        "../apps",
+        "node_modules",
+        "dist"
+    ],
+    "compilerOptions": {
+        "baseUrl": ".",
+
+        "paths": {
+            "@node/*": ["../packages/node/*"],
+            "@shared": ["../packages/shared/index"]
+        }
+    }
+}

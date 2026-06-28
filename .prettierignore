@@ -1,0 +1,4 @@
+packages/node/prisma
+.tmp
+node_modules
+dist

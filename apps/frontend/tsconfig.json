@@ -1,0 +1,34 @@
+{
+    "extends": "../../tsconfig.json",
+    "include": [
+        "env.d.ts",
+        "src/**/*.vue",
+        "src/**/*.ts",
+        "vite.config.*",
+        "../../tools"
+    ],
+    "exclude": [
+        "../../**/*.mts",
+        "../../**/*.mjs",
+        "../backend",
+        "../../packages/node",
+        "../../tools",
+        "node_modules",
+        "dist"
+    ],
+    "compilerOptions": {
+        "noEmit": true,
+        "types": ["node"],
+        "module": "preserve",
+        "moduleResolution": "bundler",
+        "noUncheckedIndexedAccess": true,
+        "baseUrl": ".",
+        "rootDir": "../..",
+
+        "paths": {
+            "@/*": ["./src/*"],
+            "@com/*": ["./src/components/*"],
+            "@shared": ["../../packages/shared/index"]
+        }
+    }
+}

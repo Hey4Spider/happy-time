@@ -1,0 +1,27 @@
+{
+    "name": "backend",
+    "scripts": {
+        "build": "nest build",
+        "start": "node dist/main",
+        "dev": "dotenv -e ../../config/node/.env -c dev -- nest start --watch",
+        "debug": "dotenv -e ../../config/node/.env -c dev -- nest start --debug --watch"
+    },
+    "dependencies": {
+        "@fastify/multipart": "^10.0.0",
+        "@nestjs/common": "^11.0.1",
+        "@nestjs/core": "^11.0.1",
+        "@nestjs/platform-fastify": "^11.1.18",
+        "@nestjs/swagger": "^11.2.6",
+        "@prisma/adapter-pg": "^7.7.0",
+        "@prisma/client": "^7.7.0",
+        "class-transformer": "^0.5.1",
+        "class-validator": "^0.14.4",
+        "fastify": "^5.8.4",
+        "sharp": "^0.34.5",
+        "sql-formatter": "^15.7.3"
+    },
+    "devDependencies": {
+        "@nestjs/cli": "^11.0.0",
+        "@nestjs/schematics": "^11.0.0"
+    }
+}

@@ -1,0 +1,39 @@
+generator client {
+  provider        = "prisma-client"
+  output          = env("DB_CLIENT_PATH")
+  previewFeatures = ["relationJoins", "typedSql"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Misskon {
+  id     Int    @id @default(autoincrement())
+  key    String @unique
+  name   String
+  url    String @unique
+  link   String
+  status Int    @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  tags MisskonTag[]
+
+  @@index([key])
+  @@index([status])
+  @@map("misskon")
+}
+
+model MisskonTag {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  url  String @unique
+  like Int    @default(1)
+
+  resources Misskon[]
+
+  @@index([like])
+  @@map("misskon_tag")
+}

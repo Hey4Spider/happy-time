@@ -1,0 +1,16 @@
+{
+    "name": "@nic/tools",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "start": "dotenv -e ../config/node/.env -c dev -- ts-node -r tsconfig-paths/register src/index.ts"
+    },
+    "dependencies": {
+        "@prisma/adapter-pg": "^7.8.0",
+        "@prisma/client": "^7.8.0",
+        "axios": "^1.17.0",
+        "commander": "^15.0.0",
+        "csvtojson": "^2.0.14",
+        "node-html-parser": "^7.1.0"
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "include": ["**/*.ts", "**/*.mts"],
+    "exclude": ["node_modules", "dist", ".tmp", "packages"],
+    "files": ["./types/index.d.ts"],
+    "compilerOptions": {
+        "ignoreDeprecations": "6.0",
+        "target": "es2025",
+        "module": "commonjs", // 生成哪个模块系统代码
+        "declaration": false, // 生成声明文件 (*.d.ts)
+        "outDir": "./dist", // 输出目录
+        "baseUrl": ".", // 输出目录
+        "rootDir": ".",
+        "strict": true, // 启用所有严格模式
+        "esModuleInterop": true, // 生成 ES 模块文件
+        "skipLibCheck": false, // 跳过声明文件 (*.d.ts) 的检查
+        "forceConsistentCasingInFileNames": true,
+        "removeComments": true, // 删除注释
+        "allowSyntheticDefaultImports": true, // 允许默认和合成导入
+        "noImplicitAny": false, // 隐含 any 类型
+        "noFallthroughCasesInSwitch": true, // 每条 case 语法必须退出
+        "incremental": true, // 增量式编译
+        "sourceMap": false, // 是否生成 *.map 文件,
+
+        "paths": {
+            "@node/*": ["./packages/node/*"],
+            "@shared": ["./packages/shared/index"]
+        }
+    }
+}

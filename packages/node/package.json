@@ -1,0 +1,10 @@
+{
+    "name": "@nic/node",
+    "version": "0.0.1",
+    "dependencies": {
+        "@prisma/client": "^7.7.0",
+        "class-validator": "^0.14.4",
+        "triple-beam": "^1.4.1",
+        "winston": "^3.19.0"
+    }
+}

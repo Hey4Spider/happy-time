@@ -12,6 +12,7 @@ export function isSymbol(value: unknown) {
 export function isImage(mimetype: string) {
     return FileTypeImage[mimetype.toLowerCase()]
 }
+/** 判断是否为函数 */
 export function isFunction(val: unknown): val is Function {
     return typeof val === 'function'
 }

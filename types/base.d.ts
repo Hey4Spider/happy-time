@@ -6,10 +6,10 @@ declare type ArrayType<T> = T extends (infer U)[] ? U : T
 declare type Nullable<T> = T | null
 /** 获取对象的 key 作为联合类型 */
 declare type PickKey<T, U extends keyof T> = keyof Pick<T, U>
-
+/** 部分 Key 转必填 */
 declare type RequiredKey<T, U extends keyof T> = Omit<T, U> &
     Required<Pick<T, U>>
-/** Function Return */
+/** Function 返回值 */
 declare type FuncReturn<T extends (...args: any[]) => any> = Awaited<
     ReturnType<T>
 >

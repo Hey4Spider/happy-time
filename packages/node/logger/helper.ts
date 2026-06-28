@@ -1,4 +1,4 @@
-import { LogLevel } from '@shared'
+import { LogLevel } from './deinition'
 
 export const ColorCode = {
     [LogLevel.Error]: '91', // red

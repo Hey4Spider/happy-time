@@ -1,5 +1,4 @@
-import { APPLICATION, Logger } from '@node/logger'
-import { LogLevel } from '@shared'
+import { APPLICATION, Logger, LogLevel } from '@node/logger'
 
 export const logger = new Logger(LogLevel.Debug, {
     [APPLICATION]: 'Tools',

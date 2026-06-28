@@ -1,6 +1,6 @@
-import { isBaseType, LogLevel } from '@shared'
+import { isBaseType } from '@shared'
 import * as Winston from 'winston'
-import { APPLICATION, CATEGORY, LoggerMeta } from './deinition'
+import { APPLICATION, CATEGORY, LoggerMeta, LogLevel } from './deinition'
 import { colorString } from './helper'
 import { SPLAT } from 'triple-beam'
 

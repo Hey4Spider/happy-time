@@ -1,8 +1,10 @@
 import { isFunction } from './is'
 
-export const sleep = (ms: number) =>
-    new Promise(resolve => setTimeout(resolve, ms))
-
+/** 延时等待 */
+export const sleep = (ms: number) => {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+/** 随机整数 */
 export const randomInt = (max = 1, min = 0) => {
     min = Math.ceil(min)
     max = Math.floor(max)
@@ -11,7 +13,6 @@ export const randomInt = (max = 1, min = 0) => {
     }
     return 0
 }
-
 /** 随机字符串 */
 export const randomString = (
     len = 8,
@@ -39,7 +40,6 @@ export function prettySize(size: number, sizeIdx = 0) {
         return size.toFixed(1) + SizeList[sizeIdx]
     }
 }
-
 /**
  * 根据指定的键和指定的值 (默认为数组元素), 从 JSON 数组中取出对应的键和值作为映射, 并返回
  *

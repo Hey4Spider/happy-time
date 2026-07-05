@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from '@/stores'
+import { useGlobalStore } from '@/stores'
 import { RespResource } from '@/utils'
 import { sleep } from '@shared'
 import { ElButton, ElImage, ElScrollbar } from 'element-plus'
@@ -35,10 +35,10 @@ import {
     watch,
 } from 'vue'
 
-const { Workspace } = useStore()
+const Store = useGlobalStore()
 
 const imageFolder = computed(() => {
-    return import.meta.env.VITE_SERVER_URL + '/' + Workspace.value
+    return import.meta.env.VITE_SERVER_URL + '/' + Store.Workspace
 })
 
 const props = defineProps<{

@@ -14,8 +14,6 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-app.use(ElementPlus, {
-    locale: ElementPlusZhCn,
-})
+app.use(ElementPlus, { locale: ElementPlusZhCn })
 
 app.mount('#app')

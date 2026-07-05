@@ -32,6 +32,7 @@
 .app-aside {
     width: 200px;
     border-right: var(--el-border);
+    box-sizing: border-box;
 }
 .app-aside-dark {
     @extend .app-aside;

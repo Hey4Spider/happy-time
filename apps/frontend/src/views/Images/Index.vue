@@ -47,6 +47,8 @@ import { useEventListener, useMagicKeys } from '@vueuse/core'
 import { computed, onMounted, shallowRef, useTemplateRef, watch } from 'vue'
 import {
     apis,
+    ImageItem,
+    isValidImage,
     ResourceType,
     RespResource,
     RespWorkspace,
@@ -54,7 +56,7 @@ import {
 } from '@/utils/index.js'
 import router from '@/router/index.js'
 import { useRoute } from 'vue-router'
-import { useStore } from '@/stores/local-store.js'
+import { useGlobalStore } from '@/stores'
 
 interface ResourceItem extends RespResource {
     prev?: ResourceItem
@@ -62,7 +64,7 @@ interface ResourceItem extends RespResource {
     children: ResourceItem[]
 }
 
-const { Workspace, KeyShift, KeyMeta } = useStore()
+const Store = useGlobalStore()
 
 const route = useRoute()
 
@@ -71,7 +73,7 @@ const refMagic = useTemplateRef('refMagic')
 
 const workspaceList = shallowRef<RespWorkspace[]>([])
 const folderList = shallowRef<RespResource[]>([])
-const imageList = shallowRef<RespResource[]>([])
+const imageList = shallowRef<ImageItem[]>([])
 
 const folder = computed(() => route.hash?.slice(1))
 
@@ -87,31 +89,34 @@ async function listWorkspace() {
     workspaceList.value = list
 
     let isActive = false
-    if (Workspace.value) {
+    if (Store.Workspace) {
         /** 缓存工作区是否可用 */
         isActive =
-            list.find(item => item.key === Workspace.value)?.isActive || false
+            list.find(item => item.key === Store.Workspace)?.isActive || false
     }
     if (!isActive) {
         /** 缓存工作区不存在 || 缓存工作区不可用 */
-        Workspace.value = list.find(item => item.isActive)?.key
+        Store.Workspace = list.find(item => item.isActive)!.key
     }
     // FIXME: 没有工作区怎么办
 }
 // MARK: 获取图片和目录
 async function listImage(folder?: string, updateParent?: boolean) {
     const res = await apis.Images.listImage({
-        workspace: Workspace.value,
+        workspace: Store.Workspace,
         folder,
     })
     const _folderList: RespResource[] = []
-    const _imageList: RespResource[] = []
+    const _imageList: ImageItem[] = []
 
     for (const item of res.data.list) {
-        if (item.type === ResourceType.File) {
-            _imageList.push(item)
-        } else if (item.type === ResourceType.Folder) {
+        if (item.type === ResourceType.Folder) {
             _folderList.push(item)
+        } else if (item.type === ResourceType.File) {
+            _imageList.push({
+                ...item,
+                isImage: isValidImage(item.path),
+            })
         }
     }
     folderList.value = _folderList
@@ -129,7 +134,7 @@ let resourceMap: Recordable<ResourceItem> = {}
 async function listParentFolder(folder?: string) {
     resourceMap = {}
     const res = await apis.Images.listImage({
-        workspace: Workspace.value,
+        workspace: Store.Workspace,
         folder,
     })
 
@@ -158,7 +163,7 @@ async function operateWorkspcae(
 ) {
     await apis.Images.operateWorkspcae({
         operation,
-        workspace: Workspace.value,
+        workspace: Store.Workspace,
         folder,
     })
 }
@@ -200,7 +205,7 @@ async function removeFolder() {
     }
 
     await apis.Images.removeImage({
-        workspace: Workspace.value,
+        workspace: Store.Workspace,
         image: folder.value,
     })
     await changeFolder('next', true)
@@ -208,11 +213,11 @@ async function removeFolder() {
 // MARK: 点击图片删除
 async function onRemoveClick(item: RespResource, index: number) {
     let count = 1
-    if (KeyMeta.value) {
+    if (Store.KeyMeta) {
         // Magic Remove
         refMagic.value?.open(index)
         return
-    } else if (KeyShift.value) {
+    } else if (Store.KeyShift) {
         count = index + 1
     }
     let scroll = false
@@ -231,7 +236,7 @@ async function onRemoveClick(item: RespResource, index: number) {
 // MARK: 删除图片
 async function onRemove(item: RespResource, index: number, count: number) {
     await apis.Images.removeImage({
-        workspace: Workspace.value,
+        workspace: Store.Workspace,
         image: item.path,
         count: count,
     })
@@ -244,7 +249,7 @@ let isLoading = false
 useEventListener('keydown', async (e: KeyboardEvent) => {
     if (isLoading) {
         return
-    } else if (KeyShift.value) {
+    } else if (Store.KeyShift) {
         isLoading = true
         if (e.key === 'Z') {
             await apis.Images.revokeImage()
@@ -266,7 +271,7 @@ const {
 } = useMagicKeys()
 watch(
     [
-        KeyShift,
+        () => Store.KeyShift,
         // KeyMeta,
         ArrowUp,
         ArrowDown,
@@ -283,7 +288,7 @@ watch(
         }
 
         isLoading = true
-        if (!KeyShift.value) {
+        if (!Store.KeyShift) {
             if (ArrowLeft?.value) {
                 refMain.value?.changeImage('prev')
             } else if (ArrowRight?.value) {

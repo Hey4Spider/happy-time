@@ -14,6 +14,7 @@ import {
   ListImageParams,
   MergeImageDto,
   OperateWorkspaceDto,
+  PreviewImageParams,
   RemoveImageParams,
   RespResource,
   RespWorkspace,
@@ -124,6 +125,20 @@ export class Images<SecurityDataType = unknown> {
     this.http.request<undefined, any>({
       path: `/api/v1/images/revoke`,
       method: "POST",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Images
+   * @name PreviewImage
+   * @request GET:/api/v1/images/preview
+   */
+  previewImage = (query: PreviewImageParams, params: RequestParams = {}) =>
+    this.http.request<undefined, any>({
+      path: `/api/v1/images/preview`,
+      method: "GET",
+      query: query,
       ...params,
     });
 }

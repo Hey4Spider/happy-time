@@ -11,13 +11,11 @@
         "element-plus": "^2.14.0",
         "normalize.css": "^8.0.1",
         "pinia": "^3.0.4",
-        "sortablejs": "^1.15.7",
         "vue": "^3.5.31",
         "vue-draggable-plus": "^0.6.1",
         "vue-router": "^5.0.4"
     },
     "devDependencies": {
-        "@types/sortablejs": "^1.15.9",
         "@vitejs/plugin-vue": "^6.0.5",
         "sass": "^1.99.0",
         "swagger-typescript-api": "^13.6.10",

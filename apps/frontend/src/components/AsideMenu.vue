@@ -1,12 +1,16 @@
 <template>
+    <ElAffix class="aside-menu-header" v-if="$slots.header">
+        <slot name="header" />
+    </ElAffix>
+
     <ElMenu
-        class="aside"
+        :class="['aside-menu', { 'aside-menu-dark': dark }]"
         unique-opened
         :default-active="defaultActive"
         :default-openeds="['0']"
         @select="onSelect"
     >
-        <template v-for="item of MenuData" :key="item.route">
+        <template v-for="item of MenuData" :key="item.uid">
             <ElSubMenu v-if="item.children.length" :index="item.uid">
                 <template v-slot:title>{{ item.label }}</template>
                 <template v-for="child of item.children" :key="child.uid">
@@ -33,7 +37,7 @@
 <script lang="ts" setup>
 import router from '@/router'
 import { MenuData, MenuItem } from '@/utils'
-import { ElMenu, ElMenuItem, ElSubMenu } from 'element-plus'
+import { ElAffix, ElMenu, ElMenuItem, ElSubMenu } from 'element-plus'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -41,6 +45,7 @@ const route = useRoute()
 
 const props = defineProps<{
     height?: number | string
+    dark?: boolean
 }>()
 const emits = defineEmits(['select'])
 
@@ -75,13 +80,17 @@ const onSelect = (route: string) => {
 </script>
 
 <style lang="scss" scoped>
-.aside {
-    --el-menu-bg-color: none;
-    --el-menu-text-color: white;
-    --el-menu-hover-bg-color: var(--el-text-color-primary);
+.aside-menu-filter {
+    padding: 10px;
+    border-bottom: var(--el-border);
+}
+
+.aside-menu {
+    --el-menu-hover-bg-color: none;
     --el-menu-item-height: 50px;
 
     height: 100vh;
+    border-right: var(--el-border);
 
     :deep(.el-sub-menu__title):hover,
     .el-menu-item:hover {
@@ -89,14 +98,28 @@ const onSelect = (route: string) => {
     }
 
     .el-sub-menu .el-menu-item:first-child {
-        border-top: 1px solid white;
+        border-top: var(--el-border);
     }
     .el-sub-menu,
     .el-menu-item {
-        border-bottom: 1px solid white;
+        border-bottom: var(--el-border);
     }
     .el-sub-menu.is-opened {
         border-bottom: none;
+    }
+}
+
+.aside-menu-dark {
+    --el-menu-bg-color: var(--el-text-color-primary);
+    --el-menu-text-color: white;
+    --el-menu-hover-bg-color: var(--el-text-color-primary);
+
+    .el-sub-menu .el-menu-item:first-child {
+        border-top-color: white;
+    }
+    .el-sub-menu,
+    .el-menu-item {
+        border-bottom-color: white;
     }
 }
 </style>

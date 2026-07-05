@@ -1,2 +1,2 @@
-export * from './local-store'
+export * from './global'
 export * from './pagination'

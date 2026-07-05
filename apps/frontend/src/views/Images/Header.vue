@@ -1,5 +1,5 @@
 <template>
-    <ElSelect class="workspace" v-model="Workspace" @change="onChange">
+    <ElSelect class="workspace" v-model="Store.Workspace" @change="onChange">
         <ElOption
             v-for="item of list"
             :key="item.key"
@@ -12,7 +12,7 @@
 
     <div class="path">
         <template v-for="(item, index) of paths" :key="item">
-            <div class="path-item hover" @click="onClick(item, index)">
+            <div class="hover path-item" @click="onClick(item, index)">
                 {{ item }}
             </div>
             <div class="split" v-if="index < paths.length - 1">/</div>
@@ -21,7 +21,7 @@
 
     <ElPopover width="400">
         <template #reference>
-            <ElIcon class="help hover"><QuestionFilled /></ElIcon>
+            <ElIcon class="hover help-icon"><QuestionFilled /></ElIcon>
         </template>
 
         <ElDescriptions border :column="1">
@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from '@/stores'
+import { useGlobalStore } from '@/stores'
 import { RespWorkspace } from '@/utils'
 import { QuestionFilled } from '@element-plus/icons-vue'
 import {
@@ -52,14 +52,10 @@ import { computed, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-
-const { Workspace } = useStore()
-
 const emits = defineEmits<{
     workspace: [value: string]
     folder: [value?: string]
 }>()
-
 defineProps<{
     list: RespWorkspace[]
 }>()
@@ -79,6 +75,8 @@ const helper = [
     { label: 'Shift + O', value: '打开当前目录' },
     { label: 'Shift + T', value: '打开回收站' },
 ]
+
+const Store = useGlobalStore()
 
 const paths = computed(() => {
     const hash = route.hash?.slice(1)
@@ -106,14 +104,6 @@ function onClick(value: string, index: number) {
 
 .path {
     display: flex;
-    .back {
-        margin-left: 10px;
-        margin-right: -4px;
-        &.disabled {
-            cursor: not-allowed;
-            color: var(--el-text-color-disabled);
-        }
-    }
     .split {
         margin: 0 10px;
     }
@@ -123,7 +113,7 @@ function onClick(value: string, index: number) {
     }
 }
 
-.help {
+.help-icon {
     margin-left: auto;
     font-size: 24px;
     color: var(--el-text-color-primary);

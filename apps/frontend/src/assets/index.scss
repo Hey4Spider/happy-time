@@ -2,8 +2,8 @@
 @use './layout.scss';
 
 .hover:hover {
-    color: var(--el-color-primary) !important;
-    cursor: pointer !important;
+    color: var(--el-color-primary);
+    cursor: pointer;
 }
 
 .color-ignore {
@@ -19,10 +19,11 @@
     color: var(--el-color-success);
 }
 
-.chart-title {
+.text-ellipsis {
     width: 100%;
-    text-align: center;
-    font-size: 2em;
-    font-weight: bold;
-    margin-top: 20px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    // direction: rtl;
+    // text-align: left;
 }

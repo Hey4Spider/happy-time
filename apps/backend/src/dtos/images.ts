@@ -37,12 +37,14 @@ export class OperateWorkspaceDto extends ListImageQueryDto {
     operation!: WorkspaceOperation
 }
 
-export class RemoveImageQueryDto extends PickType(ListImageQueryDto, [
+export class PreviewImageQueryDto extends PickType(ListImageQueryDto, [
     'workspace',
 ] as const) {
     @IsNotEmptyString({ required: true })
     image!: string
+}
 
+export class RemoveImageQueryDto extends PreviewImageQueryDto {
     @IsIntData({ min: 1 }, { swagger: { default: 1 } })
     count?: number
 }

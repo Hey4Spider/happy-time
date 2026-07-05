@@ -101,6 +101,11 @@ export interface RemoveImageParams {
   count?: number;
 }
 
+export interface PreviewImageParams {
+  workspace: string;
+  image: string;
+}
+
 export interface ListMisskonTagParams {
   like?: number;
   page?: number;

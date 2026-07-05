@@ -2,6 +2,7 @@ import {
     ListImageQueryDto,
     MergeImageDto,
     OperateWorkspaceDto,
+    PreviewImageQueryDto,
     RemoveImageQueryDto,
 } from '@/dtos'
 import { RespResource, RespWorkspace } from '@/responses'
@@ -66,5 +67,11 @@ export class ImagesController {
     @ApiResult()
     revokeImage() {
         return this.service.revokeImage()
+    }
+
+    @Get('preview')
+    @ApiResult()
+    previewImage(@Query() query: PreviewImageQueryDto) {
+        return this.service.previewImage(query)
     }
 }

@@ -1,48 +1,43 @@
 <template>
     <ElContainer class="app-container">
-        <ElAside class="app-aside-dark aside">
-            <Aside />
+        <ElAside class="app-aside-dark" style="width: 150px">
+            <AsideMenu dark />
         </ElAside>
 
-        <ElMain v-if="!route.meta.hideMain" :class="mainClass">
+        <RouterView v-if="route.meta.hideMain" />
+        <ElMain v-else :class="mainClass">
             <RouterView />
         </ElMain>
-        <RouterView v-else />
     </ElContainer>
 </template>
 
 <script setup lang="ts">
+import AsideMenu from '@com/AsideMenu.vue'
 import { ElAside, ElContainer, ElMain } from 'element-plus'
-import Aside from '@com/Aside/Index.vue'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useEventListener } from '@vueuse/core'
-import { useStore } from './stores'
+import { useGlobalStore } from './stores'
 
-const { KeyMeta, KeyShift } = useStore()
 const route = useRoute()
+const Store = useGlobalStore()
+
 const mainClass = computed(() => {
     const classList = (route.meta.classList || []) as string[]
     return [...classList, 'app-main']
 })
 
 useEventListener('blur', () => {
-    KeyMeta.value = false
-    KeyShift.value = false
+    Store.KeyMeta = false
+    Store.KeyShift = false
 })
 useEventListener('keydown', onMagicKey)
 useEventListener('keyup', onMagicKey)
 async function onMagicKey(e: KeyboardEvent) {
     if (e.key === 'Meta') {
-        KeyMeta.value = e.metaKey
+        Store.KeyMeta = e.metaKey
     } else if (e.key === 'Shift') {
-        KeyShift.value = e.shiftKey
+        Store.KeyShift = e.shiftKey
     }
 }
 </script>
-
-<style scoped lang="scss">
-.aside {
-    width: 150px;
-}
-</style>

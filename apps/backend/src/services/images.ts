@@ -20,6 +20,7 @@ import {
     ListImageQueryDto,
     MergeImageDto,
     OperateWorkspaceDto,
+    PreviewImageQueryDto,
     RemoveImageQueryDto,
 } from '@/dtos'
 import { RespResource } from '@/responses'
@@ -346,5 +347,15 @@ export class ImagesService {
             spawnSync('rm', ['-rf', trashPath])
         }
         this.History.pop()
+    }
+    // MARK: 预览图片
+    async previewImage({ workspace, image }: PreviewImageQueryDto) {
+        const _ws = this.workspace.get(workspace)
+        const stat = this._checkResource(_ws.path, image)
+        if (!stat.isFile()) {
+            return
+        }
+        const fullPath = `${_ws.path}/${image}`
+        spawnSync('open', ['-R', fullPath])
     }
 }

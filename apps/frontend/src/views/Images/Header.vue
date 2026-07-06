@@ -19,9 +19,11 @@
         </template>
     </div>
 
-    <ElPopover width="400">
+    <ElPopover width="400" trigger="click" v-model:visible="show">
         <template #reference>
-            <ElIcon class="hover help-icon"><QuestionFilled /></ElIcon>
+            <ElIcon class="hover help-icon" @mouseleave="show = false">
+                <QuestionFilled />
+            </ElIcon>
         </template>
 
         <ElDescriptions border :column="1">
@@ -48,7 +50,7 @@ import {
     ElPopover,
     ElSelect,
 } from 'element-plus'
-import { computed, nextTick } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -77,6 +79,8 @@ const helper = [
 ]
 
 const Store = useGlobalStore()
+
+const show = ref(false)
 
 const paths = computed(() => {
     const hash = route.hash?.slice(1)

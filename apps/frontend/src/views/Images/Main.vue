@@ -1,8 +1,21 @@
 <template>
-    <ElScrollbar ref="refScrollbar" height="calc(100vh - 50px)">
+    <ElScrollbar
+        ref="refScrollbar"
+        height="calc(100vh - 50px)"
+        @scroll="onScroll"
+    >
         <div v-for="(item, index) of list" :key="item.path">
             <div class="image-header">
-                <div class="image-name">{{ item.name }}</div>
+                <div class="image-name text-ellipsis">
+                    {{ item.name }} ({{ item.size }})
+                </div>
+                <ElButton
+                    v-if="!item.isImage"
+                    type="primary"
+                    @click="onPreview(item)"
+                >
+                    打开预览
+                </ElButton>
                 <ElButton
                     type="danger"
                     :ref="el => setBtnRef(el, item.path)"
@@ -11,7 +24,7 @@
                     删除
                 </ElButton>
             </div>
-            <div class="image-wrap flex-center">
+            <div class="image-wrap flex-center" v-if="item.isImage">
                 <ElImage
                     class="image"
                     :src="`${imageFolder}/${item.path}`"
@@ -24,7 +37,7 @@
 
 <script setup lang="ts">
 import { useGlobalStore } from '@/stores'
-import { RespResource } from '@/utils'
+import { apis, ImageItem, RespResource } from '@/utils'
 import { sleep } from '@shared'
 import { ElButton, ElImage, ElScrollbar } from 'element-plus'
 import {
@@ -42,7 +55,7 @@ const imageFolder = computed(() => {
 })
 
 const props = defineProps<{
-    list: RespResource[]
+    list: ImageItem[]
 }>()
 const emits = defineEmits<{
     remove: [item: RespResource, index: number]
@@ -84,12 +97,29 @@ function setBtnRef(el: Element | ComponentPublicInstance | null, key: string) {
         delete btnRefMap[key]
     }
 }
+
+async function onPreview(item: RespResource) {
+    await apis.Images.previewImage({
+        workspace: Store.Workspace,
+        image: item.path,
+    })
+}
+
+let currTop = 0
+const topThreshold = ImageHeight / 3
+function onScroll({ scrollTop }) {
+    currTop = scrollTop
+}
 // MARK: 删除后, 自动对焦到下一个按钮
 watch(
     () => props.list.length,
     async () => {
         await sleep(100)
-        btnRefMap[nextPath]?.ref.focus()
+        const remaining = currTop % ImageHeight
+        if (remaining === 0 || remaining > topThreshold) {
+            // 只有按钮在 1/3 高度时才聚焦
+            btnRefMap[nextPath]?.ref.focus()
+        }
     },
 )
 
@@ -110,13 +140,7 @@ defineExpose({
     box-sizing: border-box;
 }
 .image-name {
-    width: 100%;
     padding-right: 10px;
-    overflow: hidden; /* 隐藏溢出内容 */
-    text-overflow: ellipsis; /* 溢出时显示省略号 */
-    white-space: nowrap;
-    direction: rtl;
-    text-align: left;
 }
 .image-wrap {
     height: calc(100vh - 100px);

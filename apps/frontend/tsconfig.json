@@ -11,6 +11,7 @@
         "../../**/*.mts",
         "../../**/*.mjs",
         "../backend",
+        "../frontend-mobile",
         "../../packages/node",
         "../../tools",
         "node_modules",

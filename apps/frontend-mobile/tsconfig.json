@@ -1,28 +1,34 @@
 {
     "extends": "../../tsconfig.json",
-    "include": ["src/**/*", "../../packages"],
+    "include": [
+        "env.d.ts",
+        "src/**/*.vue",
+        "src/**/*.ts",
+        "vite.config.*",
+        "../../tools"
+    ],
     "exclude": [
         "../../**/*.mts",
         "../../**/*.mjs",
+        "../backend",
         "../frontend",
-        "../frontend-mobile",
+        "../../packages/node",
         "../../tools",
         "node_modules",
         "dist"
     ],
     "compilerOptions": {
-        "isolatedModules": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "outDir": "./dist",
+        "noEmit": true,
+        "types": ["node"],
+        "module": "preserve",
+        "moduleResolution": "bundler",
+        "noUncheckedIndexedAccess": true,
         "baseUrl": ".",
         "rootDir": "../..",
 
         "paths": {
             "@/*": ["./src/*"],
-            "@node/*": ["../../packages/node/*"],
+            "@com/*": ["./src/components/*"],
             "@shared": ["../../packages/shared/index"]
         }
     }

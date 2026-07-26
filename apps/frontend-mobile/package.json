@@ -1,0 +1,25 @@
+{
+    "name": "frontend-mobile",
+    "scripts": {
+        "dev": "vite -m mobile",
+        "build": "vite build",
+        "apis": "swagger-typescript-api generate -p http://localhost:3333/api-json -o ./src/utils/apis --axios --modular --module-name-index 2 --default-as-success --extract-request-body --extract-request-params --single-http-client --default-response=\"undefined\""
+    },
+    "dependencies": {
+        "@element-plus/icons-vue": "^2.3.2",
+        "axios": "^1.15.0",
+        "element-plus": "^2.14.0",
+        "normalize.css": "^8.0.1",
+        "pinia": "^3.0.4",
+        "vue": "^3.5.31",
+        "vue-draggable-plus": "^0.6.1",
+        "vue-router": "^5.0.4"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^6.0.5",
+        "sass": "^1.99.0",
+        "swagger-typescript-api": "^13.6.10",
+        "vite": "^8.0.3",
+        "vite-plugin-vue-devtools": "^8.1.1"
+    }
+}

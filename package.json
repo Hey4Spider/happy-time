@@ -5,12 +5,14 @@
     "workspaces": [
         "apps/backend",
         "apps/frontend",
+        "apps/frontend-mobile",
         "packages/node",
         "tools"
     ],
     "scripts": {
         "backend": "npm run dev -w backend",
-        "frontend": "npm run dev -w frontend"
+        "frontend": "npm run dev -w frontend",
+        "frontend-mobile": "npm run dev -w frontend-mobile"
     },
     "dependencies": {
         "@vueuse/core": "^14.3.0",

@@ -3,8 +3,10 @@
         <ElHeader class="app-header header">
             <ImageHeader
                 :list="workspaceList"
+                :count="imageList.length"
                 @workspace="onWorkspaceChange"
                 @folder="onFolderClick"
+                @remove="removeFolder"
             />
         </ElHeader>
 
@@ -57,6 +59,7 @@ import {
 import router from '@/router/index.js'
 import { useRoute } from 'vue-router'
 import { useGlobalStore } from '@/stores'
+import { sleep } from '@shared'
 
 interface ResourceItem extends RespResource {
     prev?: ResourceItem
@@ -161,11 +164,18 @@ async function operateWorkspcae(
     operation: WorkspaceOperation,
     folder?: string,
 ) {
-    await apis.Images.operateWorkspcae({
-        operation,
-        workspace: Store.Workspace,
-        folder,
-    })
+    let notify: string = ''
+    if (operation === WorkspaceOperation.Clear) {
+        notify = '删除成功'
+    }
+    await apis.Images.operateWorkspcae(
+        {
+            operation,
+            workspace: Store.Workspace,
+            folder,
+        },
+        { notify },
+    )
 }
 // MARK: 切换目录
 async function changeFolder(
@@ -204,10 +214,22 @@ async function removeFolder() {
         return
     }
 
-    await apis.Images.removeImage({
-        workspace: Store.Workspace,
-        image: folder.value,
-    })
+    await apis.Images.removeImage(
+        {
+            workspace: Store.Workspace,
+            image: folder.value,
+        },
+        { notify: '删除成功' },
+    )
+    const folderList = folder.value?.split('/') || []
+    const name = folderList.pop() || ''
+    const tar = resourceMap[name]!
+    if (tar.prev) {
+        tar.prev.next = tar.next
+    }
+    if (tar.next) {
+        tar.next.prev = tar.prev
+    }
     await changeFolder('next', true)
 }
 // MARK: 点击图片删除
@@ -249,10 +271,18 @@ let isLoading = false
 useEventListener('keydown', async (e: KeyboardEvent) => {
     if (isLoading) {
         return
-    } else if (Store.KeyShift) {
+    } else {
         isLoading = true
-        if (e.key === 'Z') {
-            await apis.Images.revokeImage()
+        if (Store.KeyShift && e.key === 'Z') {
+            await apis.Images.revokeImage({
+                notify: '撤销成功',
+            })
+        } else if (!Store.KeyShift && e.key === 'ArrowRight') {
+            refMain.value?.changeImage('next')
+            await sleep(80)
+        } else if (!Store.KeyShift && e.key === 'ArrowLeft') {
+            refMain.value?.changeImage('prev')
+            await sleep(80)
         }
         isLoading = false
     }
@@ -263,38 +293,20 @@ const {
     ArrowUp,
     ArrowDown,
     ArrowLeft,
-    ArrowRight,
     Backspace,
     K,
     O,
     T,
 } = useMagicKeys()
 watch(
-    [
-        () => Store.KeyShift,
-        // KeyMeta,
-        ArrowUp,
-        ArrowDown,
-        ArrowLeft,
-        ArrowRight,
-        Backspace,
-        K,
-        O,
-        T,
-    ],
+    [() => Store.KeyShift, ArrowUp, ArrowDown, ArrowLeft, Backspace, K, O, T],
     async () => {
-        if (isLoading) {
+        if (isLoading || !Store.KeyShift) {
             return
         }
 
-        isLoading = true
-        if (!Store.KeyShift) {
-            if (ArrowLeft?.value) {
-                refMain.value?.changeImage('prev')
-            } else if (ArrowRight?.value) {
-                refMain.value?.changeImage('next')
-            }
-        } else {
+        try {
+            isLoading = true
             if (ArrowUp?.value) {
                 await changeFolder('prev')
             } else if (ArrowDown?.value) {
@@ -313,8 +325,11 @@ watch(
             } else if (K?.value) {
                 await operateWorkspcae(WorkspaceOperation.Clear)
             }
+        } catch (e) {
+            console.error(e)
+        } finally {
+            isLoading = false
         }
-        isLoading = false
     },
 )
 // MARK: 工作区变更

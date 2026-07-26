@@ -17,7 +17,10 @@
             </div>
             <div class="split" v-if="index < paths.length - 1">/</div>
         </template>
+        <span v-if="count" style="padding-left: 10px">({{ count }} 项)</span>
     </div>
+
+    <ElButton type="danger" @click="onRemove">删除</ElButton>
 
     <ElPopover width="400" trigger="click" v-model:visible="show">
         <template #reference>
@@ -43,6 +46,7 @@ import { useGlobalStore } from '@/stores'
 import { RespWorkspace } from '@/utils'
 import { QuestionFilled } from '@element-plus/icons-vue'
 import {
+    ElButton,
     ElDescriptions,
     ElDescriptionsItem,
     ElIcon,
@@ -57,9 +61,11 @@ const route = useRoute()
 const emits = defineEmits<{
     workspace: [value: string]
     folder: [value?: string]
+    remove: []
 }>()
 defineProps<{
     list: RespWorkspace[]
+    count?: number
 }>()
 
 const helper = [
@@ -98,6 +104,10 @@ function onChange(value: string) {
 function onClick(value: string, index: number) {
     emits('folder', paths.value.slice(1, index + 1).join('/') || undefined)
 }
+
+function onRemove() {
+    emits('remove')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -108,6 +118,7 @@ function onClick(value: string, index: number) {
 
 .path {
     display: flex;
+    margin-right: auto;
     .split {
         margin: 0 10px;
     }
@@ -118,7 +129,7 @@ function onClick(value: string, index: number) {
 }
 
 .help-icon {
-    margin-left: auto;
+    margin-left: 10px;
     font-size: 24px;
     color: var(--el-text-color-primary);
 }

@@ -115,6 +115,11 @@ export class ImagesService {
             args[0] = args[0] + '/' + folder
         } else if (operation === WorkspaceOperation.Trash) {
             args[0] = _ws.trash
+            const filename = fs.readdirSync(_ws.trash).at(-1)
+            if (filename) {
+                args[0] = '-R'
+                args[1] = `${_ws.trash}/${filename}`
+            }
         } else if (operation === WorkspaceOperation.Clear) {
             cmd = 'rm'
             args[0] = '-rf'

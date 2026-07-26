@@ -52,8 +52,11 @@ apis.instance.interceptors.request.use(config => {
 })
 apis.instance.interceptors.response.use(
     response => {
-        ElMessage.closeAll()
-        ElMessage.success('请求成功')
+        const notify = response.config.notify
+        if (notify) {
+            ElMessage.closeAll()
+            ElMessage.success(typeof notify === 'string' ? notify : '请求成功')
+        }
         return response
     },
     (error: AxiosError) => {

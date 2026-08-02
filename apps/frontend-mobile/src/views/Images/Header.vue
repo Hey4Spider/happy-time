@@ -17,15 +17,12 @@
         </ElOption>
     </ElSelect>
 
+    <div v-if="count">图片数量: {{ count }}</div>
+    <div v-else-if="folderList.length >= 0">
+        目录数量: {{ folderList.length }}
+    </div>
+
     <div class="flex-center operation">
-        <!-- <ElButton
-            class="op-remove"
-            size="small"
-            type="danger"
-            @click="onRemove"
-        >
-            删除
-        </ElButton> -->
         <ElIcon size="24" @click="showFolder"><Menu /></ElIcon>
     </div>
 

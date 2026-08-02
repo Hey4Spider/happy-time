@@ -32,7 +32,7 @@ import {
     ElMessage,
     ElMessageBox,
 } from 'element-plus'
-import { computed, onMounted, shallowRef, useTemplateRef } from 'vue'
+import { computed, onMounted, shallowRef, useTemplateRef, watch } from 'vue'
 import {
     apis,
     ImageItem,
@@ -252,6 +252,8 @@ async function onFolderClick(value?: string) {
     router.push({ hash })
     await listImage(value, true)
 }
+
+watch(folder, folder => listImage(folder))
 </script>
 
 <style scoped lang="scss">

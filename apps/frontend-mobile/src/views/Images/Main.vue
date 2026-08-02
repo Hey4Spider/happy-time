@@ -26,14 +26,14 @@
                 <div class="image-name text-ellipsis">
                     {{ item.name }} ({{ item.size }})
                 </div>
-                <ElButton
-                    size="small"
-                    type="danger"
-                    :ref="el => setBtnRef(el, item.path)"
-                    @click="onRemove(item, index)"
+                <ButtonLongPress
+                    :data="{ item, index }"
+                    :button-attrs="ButtonAttrs"
+                    @click="onRemove"
+                    @long-press="onLongPress"
                 >
                     删除
-                </ElButton>
+                </ButtonLongPress>
             </div>
             <div class="image-wrap flex-center" v-if="item.isImage">
                 <ElImage
@@ -47,17 +47,22 @@
 </template>
 
 <script setup lang="ts">
+import ButtonLongPress from '@/components/ButtonLongPress.vue'
 import { useGlobalStore } from '@/stores'
-import { ImageItem, RespResource } from '@/utils'
+import { ImageItem, RespResource, VueProps } from '@/utils'
 import { sleep } from '@shared'
 import { ElButton, ElImage, ElScrollbar } from 'element-plus'
-import {
-    ComponentPublicInstance,
-    computed,
-    reactive,
-    useTemplateRef,
-    watch,
-} from 'vue'
+import { computed, reactive, useTemplateRef, watch } from 'vue'
+
+interface ButtonData {
+    item: ImageItem
+    index: number
+}
+
+const ButtonAttrs: VueProps<typeof ElButton> = {
+    size: 'small',
+    type: 'danger',
+}
 
 const Store = useGlobalStore()
 
@@ -90,7 +95,7 @@ function changeImage(type: 'next' | 'prev') {
 }
 
 let nextPath: string
-async function onRemove(item: RespResource, index: number) {
+async function onRemove({ item, index }: ButtonData) {
     nextPath = props.list[index + 1]?.path || ''
     emits('remove', item, index)
 }
@@ -101,14 +106,6 @@ function scrollToTop() {
         top: 0,
         behavior: 'instant',
     })
-}
-
-function setBtnRef(el: Element | ComponentPublicInstance | null, key: string) {
-    if (el) {
-        btnRefMap[key] = el
-    } else {
-        delete btnRefMap[key]
-    }
 }
 
 let currTop = 0
@@ -140,6 +137,10 @@ function onFolderRemove() {
 
 function onChangeFolder(type: 'prev' | 'next') {
     emits('changeFolder', type)
+}
+
+function onLongPress({ item, index }: ButtonData) {
+    emits('remove', item, index, index + 1)
 }
 </script>
 

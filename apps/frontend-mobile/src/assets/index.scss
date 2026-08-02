@@ -1,6 +1,11 @@
 @use './element.scss';
 @use './layout.scss';
 
+// 禁止缩放
+* {
+    touch-action: pan-x pan-y;
+}
+
 .hover:hover {
     color: var(--el-color-primary);
     cursor: pointer;

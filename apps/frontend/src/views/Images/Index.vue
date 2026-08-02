@@ -60,6 +60,7 @@ import router from '@/router/index.js'
 import { useRoute } from 'vue-router'
 import { useGlobalStore } from '@/stores'
 import { sleep } from '@shared'
+import { useStore } from './store.js'
 
 interface ResourceItem extends RespResource {
     prev?: ResourceItem
@@ -67,7 +68,8 @@ interface ResourceItem extends RespResource {
     children: ResourceItem[]
 }
 
-const Store = useGlobalStore()
+const store = useStore()
+const GlobalStore = useGlobalStore()
 
 const route = useRoute()
 
@@ -92,21 +94,21 @@ async function listWorkspace() {
     workspaceList.value = list
 
     let isActive = false
-    if (Store.Workspace) {
+    if (store.Workspace) {
         /** 缓存工作区是否可用 */
         isActive =
-            list.find(item => item.key === Store.Workspace)?.isActive || false
+            list.find(item => item.key === store.Workspace)?.isActive || false
     }
     if (!isActive) {
         /** 缓存工作区不存在 || 缓存工作区不可用 */
-        Store.Workspace = list.find(item => item.isActive)!.key
+        store.Workspace = list.find(item => item.isActive)!.key
     }
     // FIXME: 没有工作区怎么办
 }
 // MARK: 获取图片和目录
 async function listImage(folder?: string, updateParent?: boolean) {
     const res = await apis.Images.listImage({
-        workspace: Store.Workspace,
+        workspace: store.Workspace,
         folder,
     })
     const _folderList: RespResource[] = []
@@ -137,7 +139,7 @@ let resourceMap: Recordable<ResourceItem> = {}
 async function listParentFolder(folder?: string) {
     resourceMap = {}
     const res = await apis.Images.listImage({
-        workspace: Store.Workspace,
+        workspace: store.Workspace,
         folder,
     })
 
@@ -171,7 +173,7 @@ async function operateWorkspcae(
     await apis.Images.operateWorkspcae(
         {
             operation,
-            workspace: Store.Workspace,
+            workspace: store.Workspace,
             folder,
         },
         { notify },
@@ -216,7 +218,7 @@ async function removeFolder() {
 
     await apis.Images.removeImage(
         {
-            workspace: Store.Workspace,
+            workspace: store.Workspace,
             image: folder.value,
         },
         { notify: '删除成功' },
@@ -235,11 +237,11 @@ async function removeFolder() {
 // MARK: 点击图片删除
 async function onRemoveClick(item: RespResource, index: number) {
     let count = 1
-    if (Store.KeyMeta) {
+    if (GlobalStore.KeyMeta) {
         // Magic Remove
         refMagic.value?.open(index)
         return
-    } else if (Store.KeyShift) {
+    } else if (GlobalStore.KeyShift) {
         count = index + 1
     }
     let scroll = false
@@ -258,7 +260,7 @@ async function onRemoveClick(item: RespResource, index: number) {
 // MARK: 删除图片
 async function onRemove(item: RespResource, index: number, count: number) {
     await apis.Images.removeImage({
-        workspace: Store.Workspace,
+        workspace: store.Workspace,
         image: item.path,
         count: count,
     })
@@ -273,16 +275,16 @@ useEventListener('keydown', async (e: KeyboardEvent) => {
         return
     } else {
         isLoading = true
-        if (Store.KeyShift && e.key === 'Z') {
+        if (GlobalStore.KeyShift && e.key === 'Z') {
             await apis.Images.revokeImage({
                 notify: '撤销成功',
             })
-        } else if (!Store.KeyShift && e.key === 'ArrowRight') {
+        } else if (!GlobalStore.KeyShift && e.key === 'ArrowRight') {
             refMain.value?.changeImage('next')
-            await sleep(80)
-        } else if (!Store.KeyShift && e.key === 'ArrowLeft') {
+            await sleep(store.Config.delay)
+        } else if (!GlobalStore.KeyShift && e.key === 'ArrowLeft') {
             refMain.value?.changeImage('prev')
-            await sleep(80)
+            await sleep(store.Config.delay)
         }
         isLoading = false
     }
@@ -299,9 +301,18 @@ const {
     T,
 } = useMagicKeys()
 watch(
-    [() => Store.KeyShift, ArrowUp, ArrowDown, ArrowLeft, Backspace, K, O, T],
+    [
+        () => GlobalStore.KeyShift,
+        ArrowUp,
+        ArrowDown,
+        ArrowLeft,
+        Backspace,
+        K,
+        O,
+        T,
+    ],
     async () => {
-        if (isLoading || !Store.KeyShift) {
+        if (isLoading || !GlobalStore.KeyShift) {
             return
         }
 

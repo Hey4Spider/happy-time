@@ -25,7 +25,13 @@
 <script setup lang="ts">
 import ImageHeader from './Header.vue'
 import ImageMain from './Main.vue'
-import { ElContainer, ElHeader, ElMain, ElMessage } from 'element-plus'
+import {
+    ElContainer,
+    ElHeader,
+    ElMain,
+    ElMessage,
+    ElMessageBox,
+} from 'element-plus'
 import { computed, onMounted, shallowRef, useTemplateRef } from 'vue'
 import {
     apis,
@@ -196,6 +202,14 @@ async function removeFolder() {
 }
 // MARK: 删除图片
 async function onRemove(item: RespResource, index: number, count: number = 1) {
+    let scroll = false
+    if (count > 1) {
+        const isConfirm = await batchOperationConfirm()
+        if (!isConfirm) {
+            return
+        }
+        scroll = true
+    }
     await apis.Images.removeImage({
         workspace: Store.Workspace,
         image: item.path,
@@ -203,6 +217,26 @@ async function onRemove(item: RespResource, index: number, count: number = 1) {
     })
     imageList.value.splice(index - count + 1, count)
     imageList.value = [...imageList.value]
+
+    if (scroll) {
+        refMain.value?.scrollToTop()
+    }
+}
+// MARK: 批量删除确认
+async function batchOperationConfirm() {
+    try {
+        await ElMessageBox.confirm('确定是否删除?', {
+            title: '批量删除',
+            confirmButtonType: 'danger',
+            center: true,
+            showClose: false,
+        })
+        return true
+    } catch (e) {
+        ElMessage.closeAll()
+        ElMessage.info('用户取消操作')
+        return false
+    }
 }
 // MARK: 工作区变更
 async function onWorkspaceChange() {

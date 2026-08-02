@@ -5,9 +5,14 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
+const plugins: PluginOption[] = [vue()]
+if (process.env.VITE_DEV) {
+    plugins.push(vueDevTools())
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [vue(), vueDevTools()],
+    plugins,
     envDir: path.join(__dirname, '../../config/web'),
     optimizeDeps: {
         include: ['@element-plus/icons-vue'],

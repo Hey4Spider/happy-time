@@ -69,7 +69,7 @@ const props = defineProps<{
     list: ImageItem[]
 }>()
 const emits = defineEmits<{
-    remove: [item: RespResource, index: number]
+    remove: [item: RespResource, index: number, count?: number]
     removeFolder: []
     changeFolder: [type: 'prev' | 'next']
 }>()

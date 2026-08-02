@@ -46,6 +46,7 @@ import {
     ElForm,
     ElFormItem,
     ElInputNumber,
+    ElMessage,
     ElOption,
     ElSelect,
 } from 'element-plus'
@@ -82,15 +83,24 @@ function onFilter(value: string) {
 }
 
 function onConfirm() {
-    const item = props.list[_index.value]!
+    let tarIdx = _index.value
+    let tarItem = props.list[_index.value]!
     let count: number
     if (form.count) {
         count = form.count
     } else {
         const idx = props.list.findIndex(item => item.name === form.to)
-        count = _index.value - idx + 1
+        if (idx === -1 || idx === _index.value) {
+            return ElMessage.error('无效的索引')
+        } else if (idx < _index.value) {
+            count = _index.value - idx + 1
+        } else {
+            tarItem = props.list[idx]!
+            tarIdx = idx
+            count = idx - _index.value + 1
+        }
     }
-    emits('batch', item, _index.value, count)
+    emits('batch', tarItem, tarIdx, count)
     show.value = false
 }
 

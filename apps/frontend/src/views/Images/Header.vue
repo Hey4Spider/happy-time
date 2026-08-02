@@ -1,5 +1,5 @@
 <template>
-    <ElSelect class="workspace" v-model="Store.Workspace" @change="onChange">
+    <ElSelect class="workspace" v-model="store.Workspace" @change="onChange">
         <ElOption
             v-for="item of list"
             :key="item.key"
@@ -20,42 +20,21 @@
         <span v-if="count" style="padding-left: 10px">({{ count }} 项)</span>
     </div>
 
-    <ElButton type="danger" @click="onRemove">删除</ElButton>
-
-    <ElPopover width="400" trigger="click" v-model:visible="show">
-        <template #reference>
-            <ElIcon class="hover help-icon" @mouseleave="show = false">
-                <QuestionFilled />
-            </ElIcon>
-        </template>
-
-        <ElDescriptions border :column="1">
-            <ElDescriptionsItem
-                v-for="item of helper"
-                :key="item.label"
-                :label="item.label"
-            >
-                {{ item.value }}
-            </ElDescriptionsItem>
-        </ElDescriptions>
-    </ElPopover>
+    <div class="flex-center operation">
+        <ElButton type="danger" @click="onRemove">删除</ElButton>
+        <ComSetting />
+        <ComHelper />
+    </div>
 </template>
 
 <script setup lang="ts">
-import { useGlobalStore } from '@/stores'
+import ComHelper from './Helper.vue'
+import ComSetting from './Setting.vue'
 import { RespWorkspace } from '@/utils'
-import { QuestionFilled } from '@element-plus/icons-vue'
-import {
-    ElButton,
-    ElDescriptions,
-    ElDescriptionsItem,
-    ElIcon,
-    ElOption,
-    ElPopover,
-    ElSelect,
-} from 'element-plus'
-import { computed, nextTick, ref } from 'vue'
+import { ElButton, ElOption, ElSelect } from 'element-plus'
+import { computed, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
+import { useStore } from './store.js'
 
 const route = useRoute()
 const emits = defineEmits<{
@@ -68,25 +47,7 @@ defineProps<{
     count?: number
 }>()
 
-const helper = [
-    { label: '删除操作' },
-    { label: 'Shift + Click', value: '删除点击目标之前的图片' },
-    { label: 'Shift + Meta + Click', value: '根据点击目标进行批量删除' },
-    { label: 'Shift + Del', value: '删除当前目录' },
-    { label: 'Shift + Z', value: '撤销删除' },
-    { label: 'Shift + K', value: '清空回收站' },
-    { label: '目录操作' },
-    { label: 'Shift + Up', value: '上一个目录' },
-    { label: 'Shift + Down', value: '下一个目录' },
-    { label: 'Shift + Left', value: '父级目录' },
-    { label: '系统操作' },
-    { label: 'Shift + O', value: '打开当前目录' },
-    { label: 'Shift + T', value: '打开回收站' },
-]
-
-const Store = useGlobalStore()
-
-const show = ref(false)
+const store = useStore()
 
 const paths = computed(() => {
     const hash = route.hash?.slice(1)
@@ -128,9 +89,7 @@ function onRemove() {
     }
 }
 
-.help-icon {
-    margin-left: 10px;
-    font-size: 24px;
-    color: var(--el-text-color-primary);
+.operation {
+    gap: 10px;
 }
 </style>

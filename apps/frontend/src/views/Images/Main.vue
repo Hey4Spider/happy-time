@@ -36,7 +36,6 @@
 </template>
 
 <script setup lang="ts">
-import { useGlobalStore } from '@/stores'
 import { apis, ImageItem, RespResource } from '@/utils'
 import { sleep } from '@shared'
 import { ElButton, ElImage, ElScrollbar } from 'element-plus'
@@ -47,11 +46,12 @@ import {
     useTemplateRef,
     watch,
 } from 'vue'
+import { useStore } from './store'
 
-const Store = useGlobalStore()
+const store = useStore()
 
 const imageFolder = computed(() => {
-    return import.meta.env.VITE_SERVER_URL + '/' + Store.Workspace
+    return import.meta.env.VITE_SERVER_URL + '/' + store.Workspace
 })
 
 const props = defineProps<{
@@ -68,7 +68,7 @@ const ImageHeight = window.innerHeight - 50
 function changeImage(type: 'next' | 'prev') {
     const top = refScrollbar.value?.wrapRef?.scrollTop || 0
     let idx = Math.floor(top / ImageHeight)
-    idx += type === 'next' ? 1 : -1
+    idx += (type === 'next' ? 1 : -1) * store.Config.multi
     refScrollbar.value?.scrollTo({
         left: 0,
         top: Math.max(0, idx * ImageHeight),
@@ -100,7 +100,7 @@ function setBtnRef(el: Element | ComponentPublicInstance | null, key: string) {
 
 async function onPreview(item: RespResource) {
     await apis.Images.previewImage({
-        workspace: Store.Workspace,
+        workspace: store.Workspace,
         image: item.path,
     })
 }
@@ -120,6 +120,13 @@ watch(
             // 只有按钮在 1/3 高度时才聚焦
             btnRefMap[nextPath]?.ref.focus()
         }
+    },
+)
+
+watch(
+    () => store.Config.auto,
+    value => {
+        console.log('Auto:', value)
     },
 )
 

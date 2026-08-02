@@ -19,5 +19,8 @@
         "**/packages/node/prisma": true,
         "**/package-lock.json": true
     },
-    "prisma.hidePrisma6Prompts": true
+    "prisma.hidePrisma6Prompts": true,
+    "workbench.editorAssociations": {
+        "*.svg": "default"
+    }
 }

@@ -16,8 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import { ElButton, ElInput } from 'element-plus'
+import { ElButton, ElInput, ElNotification } from 'element-plus'
 import { onMounted, ref } from 'vue'
+import { apis } from './utils'
 
 const isPassed = ref(false)
 const password = ref('')
@@ -26,10 +27,15 @@ onMounted(() => {
     isPassed.value = !!localStorage.getItem('IS_PASSED')
 })
 
-function onSubmit() {
-    if (password.value === import.meta.env.VITE_PASSWORD) {
-        isPassed.value = true
-        localStorage.setItem('IS_PASSED', 'true')
+async function onSubmit() {
+    const { data } = await apis.Public.login({
+        password: password.value,
+    })
+    if (data.status) {
+        isPassed.value = data.status
+        localStorage.setItem('IS_PASS', 'true')
+    } else {
+        ElNotification.error('密码错误')
     }
 }
 </script>

@@ -21,6 +21,5 @@ declare global {
     interface ImportMetaEnv {
         VITE_SERVER_URL: string
         VITE_DEFAULT_HOME?: string
-        VITE_PASSWORD?: string
     }
 }

@@ -89,6 +89,14 @@ export interface UpdateMisskonDto {
   status?: ResourceStatus;
 }
 
+export interface RespLogin {
+  status: boolean;
+}
+
+export interface LoginDto {
+  password: string;
+}
+
 export interface ListImageParams {
   workspace: string;
   folder?: string;

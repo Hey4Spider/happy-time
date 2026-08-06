@@ -3,6 +3,7 @@ import { ApiConfig, HttpClient } from './http-client'
 import { AxiosError } from 'axios'
 import { Images } from './Images'
 import { Misskon } from './Misskon'
+import { Public } from './Public'
 
 export * from './data-contracts'
 
@@ -15,6 +16,7 @@ export class Apis<
         './http-client.ts',
     ]
 
+    readonly Public!: Public
     readonly Images!: Images
     readonly Misskon!: Misskon
 

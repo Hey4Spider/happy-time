@@ -16,11 +16,7 @@
         </ElButton>
     </div>
 
-    <ElScrollbar
-        ref="refScrollbar"
-        height="calc(100svh - 100px)"
-        @scroll="onScroll"
-    >
+    <ElScrollbar ref="refScrollbar" height="calc(100svh - 100px)">
         <div v-for="(item, index) of list" :key="item.path">
             <div class="image-header">
                 <div class="image-name text-ellipsis">
@@ -35,24 +31,17 @@
                     删除
                 </ButtonLongPress>
             </div>
-            <div class="image-wrap flex-center" v-if="item.isImage">
-                <ElImage
-                    class="image"
-                    :src="`${imageFolder}/${item.path}`"
-                    fit="scale-down"
-                />
-            </div>
+            <ComLazyImage :data="item" :scrollbar-wrap="refScrollbarWrap" />
         </div>
     </ElScrollbar>
 </template>
 
 <script setup lang="ts">
+import ComLazyImage from './LazyImage.vue'
 import ButtonLongPress from '@/components/ButtonLongPress.vue'
-import { useGlobalStore } from '@/stores'
 import { ImageItem, RespResource, VueProps } from '@/utils'
-import { sleep } from '@shared'
-import { ElButton, ElImage, ElScrollbar } from 'element-plus'
-import { computed, reactive, useTemplateRef, watch } from 'vue'
+import { ElButton, ElScrollbar } from 'element-plus'
+import { nextTick, onMounted, ref, useTemplateRef } from 'vue'
 
 interface ButtonData {
     item: ImageItem
@@ -64,13 +53,7 @@ const ButtonAttrs: VueProps<typeof ElButton> = {
     type: 'danger',
 }
 
-const Store = useGlobalStore()
-
-const imageFolder = computed(() => {
-    return import.meta.env.VITE_SERVER_URL + '/' + Store.Workspace
-})
-
-const props = defineProps<{
+defineProps<{
     list: ImageItem[]
 }>()
 const emits = defineEmits<{
@@ -78,10 +61,15 @@ const emits = defineEmits<{
     removeFolder: []
     changeFolder: [type: 'prev' | 'next']
 }>()
-const btnRefMap = reactive({})
 const refScrollbar = useTemplateRef('refScrollbar')
+const refScrollbarWrap = ref<HTMLDivElement>()
 
 const ImageHeight = window.innerHeight - 100
+
+onMounted(async () => {
+    await nextTick()
+    refScrollbarWrap.value = refScrollbar.value?.wrapRef
+})
 
 function changeImage(type: 'next' | 'prev') {
     const top = refScrollbar.value?.wrapRef?.scrollTop || 0
@@ -94,9 +82,7 @@ function changeImage(type: 'next' | 'prev') {
     })
 }
 
-let nextPath: string
-async function onRemove({ item, index }: ButtonData) {
-    nextPath = props.list[index + 1]?.path || ''
+function onRemove({ item, index }: ButtonData) {
     emits('remove', item, index)
 }
 
@@ -107,24 +93,6 @@ function scrollToTop() {
         behavior: 'instant',
     })
 }
-
-let currTop = 0
-const topThreshold = ImageHeight / 3
-function onScroll({ scrollTop }) {
-    currTop = scrollTop
-}
-// MARK: 删除后, 自动对焦到下一个按钮
-watch(
-    () => props.list.length,
-    async () => {
-        await sleep(100)
-        const remaining = currTop % ImageHeight
-        if (remaining === 0 || remaining > topThreshold) {
-            // 只有按钮在 1/3 高度时才聚焦
-            btnRefMap[nextPath]?.ref.focus()
-        }
-    },
-)
 
 defineExpose({
     changeImage,
@@ -156,15 +124,6 @@ function onLongPress({ item, index }: ButtonData) {
 }
 .image-name {
     padding-right: 10px;
-}
-.image-wrap {
-    height: calc(100svh - 150px);
-    width: 100%;
-    border-bottom: var(--el-border);
-    box-sizing: border-box;
-}
-.image {
-    height: 100%;
 }
 .operation {
     justify-content: space-between;

@@ -26,7 +26,9 @@ let stop: ReturnType<typeof onLongPress>
 onMounted(() => {
     stop = onLongPress(
         refButton.value?.$el ?? refButton.value,
-        () => emits('long-press', props.data as T),
+        () => {
+            emits('long-press', props.data as T)
+        },
         { modifiers: { prevent: true } },
     )
 })

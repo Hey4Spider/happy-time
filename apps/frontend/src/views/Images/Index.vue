@@ -343,6 +343,7 @@ watch(
         }
     },
 )
+watch(folder, () => listImage(folder.value, true))
 // MARK: 工作区变更
 async function onWorkspaceChange() {
     router.push({ hash: undefined })

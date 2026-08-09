@@ -124,6 +124,8 @@ async function action({
 
         skip = 0
     } while (page++)
+
+    await db.$disconnect()
 }
 
 async function getPage(page: number) {

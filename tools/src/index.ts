@@ -14,7 +14,5 @@ void (async () => {
         program.parse()
     } catch (e) {
         console.error(e)
-    } finally {
-        await db.$disconnect()
     }
 })()

@@ -12,7 +12,8 @@
     "scripts": {
         "backend": "npm run dev -w backend",
         "frontend": "npm run dev -w frontend",
-        "frontend-mobile": "npm run dev -w frontend-mobile"
+        "frontend-mobile": "npm run dev -w frontend-mobile",
+        "tools": "npm start -w tools"
     },
     "dependencies": {
         "@vueuse/core": "^14.3.0",

@@ -38,6 +38,10 @@ export class MisskonService implements OnModuleInit {
         const allList: TagData[] = []
         for (const id in this.TagMap) {
             const tag = this.TagMap[id]
+            if (tag.data.like === 0) {
+                continue
+            }
+
             let isTar = true
             if (isTar && _name) {
                 isTar = tag.keyword.name.includes(_name)

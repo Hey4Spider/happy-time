@@ -16,3 +16,17 @@ export class RespMisskonTag {
     @ApiProperty()
     count!: number
 }
+
+export class RespMisskon {
+    @ApiProperty()
+    id!: number
+
+    @ApiProperty()
+    name!: string
+
+    @ApiProperty()
+    key!: string
+
+    @ApiProperty()
+    link!: string
+}

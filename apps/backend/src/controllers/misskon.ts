@@ -4,7 +4,7 @@ import {
     UpdateMisskonDto,
     UpdateMisskonTagDto,
 } from '@/dtos'
-import { RespMisskonTag } from '@/responses'
+import { RespMisskon, RespMisskonTag } from '@/responses'
 import { MisskonService } from '@/services'
 import { ApiResult } from '@/utils'
 import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common'
@@ -29,7 +29,7 @@ export class MisskonController {
     }
 
     @Get()
-    @ApiResult({ type: RespMisskonTag, isList: true })
+    @ApiResult({ type: RespMisskon, isList: true })
     async listMisskon(@Query() query: ListMisskonQueryDto) {
         return await this.service.listMisskon(query)
     }

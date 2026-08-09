@@ -85,8 +85,23 @@ export interface UpdateMisskonTagDto {
   like: number;
 }
 
+export interface RespMisskon {
+  id: number;
+  name: string;
+  key: string;
+  link: string;
+}
+
 export interface UpdateMisskonDto {
   status?: ResourceStatus;
+}
+
+export interface RespLogin {
+  status: boolean;
+}
+
+export interface LoginDto {
+  password: string;
 }
 
 export interface ListImageParams {

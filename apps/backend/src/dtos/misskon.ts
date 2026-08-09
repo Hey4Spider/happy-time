@@ -2,6 +2,7 @@ import { IntersectionType, PartialType, PickType } from '@nestjs/swagger'
 import { UtilDataDto } from './utils'
 import { IsEnumData, IsIntData } from '@/utils'
 import { ResourceStatus } from '@shared'
+import { Transform } from 'class-transformer'
 
 export class UpdateMisskonTagDto {
     @IsIntData({ required: true, min: 1 })
@@ -13,6 +14,7 @@ export class ListMisskonTagQueryDto extends IntersectionType(
     PickType(UtilDataDto, ['page', 'pageSize', 'name'] as const),
 ) {
     @IsEnumData(ResourceStatus, 'ResourceStatus')
+    @Transform(({ value }) => Number(value))
     status?: ResourceStatus
 }
 

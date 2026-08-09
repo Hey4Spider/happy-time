@@ -38,6 +38,9 @@ let observer: IntersectionObserver | null = null
 
 const refWrap = useTemplateRef('refWrap')
 const show = ref(false)
+const margin = computed(() => {
+    return props.margin || window.innerHeight * 10
+})
 
 function disconnect() {
     observer?.disconnect()
@@ -61,7 +64,7 @@ function observe() {
         },
         {
             root: props.scrollbarWrap,
-            rootMargin: `${props.margin || 500}px 0`,
+            rootMargin: `${margin.value}px 0`,
             threshold: 0.01,
         },
     )

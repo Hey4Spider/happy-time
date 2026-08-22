@@ -3,14 +3,14 @@
         <ElButton type="success" size="small" @click="onChangeFolder('prev')">
             上一组
         </ElButton>
-        <ButtonLongPress
-            :data="{ force: true }"
-            :button-attrs="ButtonAttrs"
-            @click="onFolderRemove"
-            @long-press="onFolderRemove"
-        >
-            删除目录
-        </ButtonLongPress>
+        <div>
+            <ElButton type="primary" size="small" @click="onRevoke">
+                撤销删除
+            </ElButton>
+            <ElButton type="danger" size="small" @click="onFolderRemove">
+                删除目录
+            </ElButton>
+        </div>
         <ElButton type="success" size="small" @click="onChangeFolder('next')">
             下一组
         </ElButton>
@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import ComLazyImage from './LazyImage.vue'
 import ButtonLongPress from '@/components/ButtonLongPress.vue'
-import { ImageItem, RespResource, VueProps } from '@/utils'
+import { apis, ImageItem, RespResource, VueProps } from '@/utils'
 import { ElButton, ElScrollbar } from 'element-plus'
 import { nextTick, onMounted, ref, useTemplateRef } from 'vue'
 
@@ -85,8 +85,8 @@ defineExpose({
     scrollToTop,
 })
 
-function onFolderRemove(data?: { force?: boolean }) {
-    emits('removeFolder', data)
+function onFolderRemove() {
+    emits('removeFolder', { force: true })
 }
 
 function onChangeFolder(type: 'prev' | 'next') {
@@ -95,6 +95,12 @@ function onChangeFolder(type: 'prev' | 'next') {
 
 function onLongPress({ item, index }: ButtonData) {
     emits('remove', item, index, index + 1)
+}
+
+async function onRevoke() {
+    await apis.Images.revokeImage({
+        notify: '撤销成功',
+    })
 }
 </script>
 

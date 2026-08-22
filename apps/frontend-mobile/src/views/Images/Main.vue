@@ -64,23 +64,10 @@ const emits = defineEmits<{
 const refScrollbar = useTemplateRef('refScrollbar')
 const refScrollbarWrap = ref<HTMLDivElement>()
 
-const ImageHeight = window.innerHeight - 100
-
 onMounted(async () => {
     await nextTick()
     refScrollbarWrap.value = refScrollbar.value?.wrapRef
 })
-
-function changeImage(type: 'next' | 'prev') {
-    const top = refScrollbar.value?.wrapRef?.scrollTop || 0
-    let idx = Math.floor(top / ImageHeight)
-    idx += type === 'next' ? 1 : -1
-    refScrollbar.value?.scrollTo({
-        left: 0,
-        top: Math.max(0, idx * ImageHeight),
-        behavior: 'instant',
-    })
-}
 
 function onRemove({ item, index }: ButtonData) {
     emits('remove', item, index)
@@ -95,7 +82,6 @@ function scrollToTop() {
 }
 
 defineExpose({
-    changeImage,
     scrollToTop,
 })
 

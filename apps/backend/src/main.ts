@@ -4,6 +4,7 @@ import {
     NestFastifyApplication,
 } from '@nestjs/platform-fastify'
 import FastifyMultipart from '@fastify/multipart'
+import FastifyStatic from '@fastify/static'
 import { ValidationPipe, VersioningType } from '@nestjs/common'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './modules'
@@ -25,7 +26,7 @@ async function bootstrap() {
     initPipe(app)
     initApi(app)
     initSwagger(app)
-    initStatic(app, logger)
+    await initStatic(app, logger)
 
     const port = Number(process.env.PORT ?? 3000)
     await app.listen(port, '0.0.0.0')
@@ -72,18 +73,40 @@ function initSwagger(app: NestFastifyApplication) {
     })
     SwaggerModule.setup('/api', app, document)
 }
-function initStatic(app: NestFastifyApplication, logger: NestLogger) {
-    // 设置静态资源目录
-    const { list } = app
-        .select(AppModule)
-        .get(WorkspacesService)
-        .listWorkspace()
-    for (const { path, key } of list) {
-        app.useStaticAssets({
-            root: path,
-            prefix: `/${key}/`,
-            decorateReply: false,
+async function initStatic(app: NestFastifyApplication, logger: NestLogger) {
+    const workspaces = app.get(WorkspacesService)
+    const { list } = workspaces.listWorkspace()
+
+    await app.register(FastifyStatic, { serve: false })
+    app.getHttpAdapter()
+        .getInstance()
+        .get<{
+            Params: {
+                workspace: string
+                '*': string
+            }
+        }>('/:workspace/*', (request, reply) => {
+            const key = request.params.workspace
+            const file = request.params['*']
+            if (key === 'api' || !file) {
+                return reply.callNotFound()
+            }
+
+            try {
+                const workspace = workspaces.getWorkspace(key)
+                if (!workspace.isActive) {
+                    return reply.callNotFound()
+                }
+                return reply.sendFile(file, workspace.path)
+            } catch {
+                return reply.callNotFound()
+            }
         })
+
+    for (const { key, path, isActive } of list) {
+        if (!isActive) {
+            continue
+        }
         logger.info(`Set static path: /${key} - ${path}`)
     }
 }

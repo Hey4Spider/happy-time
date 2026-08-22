@@ -99,8 +99,7 @@ import {
     UploadUserFile,
 } from 'element-plus'
 import { VueDraggable } from 'vue-draggable-plus'
-import { apis, DirectionCategory } from '@/utils'
-import { ContentType } from '@/utils/apis/http-client'
+import { apis, ContentType, DirectionCategory } from '@/utils'
 import { CloseBold } from '@element-plus/icons-vue'
 
 interface FileItem {
@@ -131,7 +130,7 @@ const fileList = ref<FileItem[]>([])
 const mergeName = ref('')
 const mergeResult = ref<FileResult>()
 async function onConfirm() {
-    const res = await apis.Images.mergeImages(
+    const res = await apis.Images.mergeImage(
         {
             file: fileList.value.map(item => item.raw),
             direction: direction.value,

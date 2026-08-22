@@ -1,3 +1,3 @@
-import { RespResource } from '../apis'
+import { RespResource } from '@apis'
 
 export type ImageItem = RespResource & { isImage: boolean }

@@ -39,7 +39,7 @@ let observer: IntersectionObserver | null = null
 const refWrap = useTemplateRef('refWrap')
 const show = ref(false)
 const margin = computed(() => {
-    return props.margin || window.innerHeight * 10
+    return props.margin ?? window.innerHeight * 10
 })
 
 function disconnect() {

@@ -44,7 +44,7 @@ export class ImagesService {
     }
 
     async listImage({ workspace, folder }: ListImageQueryDto) {
-        const _workspace = this.workspace.get(workspace)
+        const _workspace = this.workspace.getWorkspace(workspace)
 
         let resFolderPath = _workspace.path
         if (folder) {
@@ -93,16 +93,12 @@ export class ImagesService {
         }
     }
 
-    listWorkspace() {
-        return this.workspace.listWorkspace()
-    }
-
     async operateWorkspcae({
         operation,
         workspace,
         folder,
     }: OperateWorkspaceDto) {
-        const _ws = this.workspace.get(workspace)
+        const _ws = this.workspace.getWorkspace(workspace)
         if (!_ws.isActive) {
             throw new ForbiddenException(
                 `Workspace '${_ws.key}' is not activated`,
@@ -262,8 +258,13 @@ export class ImagesService {
         return { width, height }
     }
     // MARK: 删除图片或目录
-    async removeImage({ workspace, image, count = 1 }: RemoveImageQueryDto) {
-        const _ws = this.workspace.get(workspace)
+    async removeImage({
+        workspace,
+        image,
+        force,
+        count = 1,
+    }: RemoveImageQueryDto) {
+        const _ws = this.workspace.getWorkspace(workspace)
         const stat = this._checkResource(_ws.path, image)
         if (!stat.isFile() || count === 1) {
             const name = image.split('/').at(-1)
@@ -271,11 +272,59 @@ export class ImagesService {
                 resPath: `${_ws.path}/${image}`,
                 trashPath: `${_ws.trash}/${Date.now()}-${name}`,
             }
-            fs.renameSync(history.resPath, history.trashPath)
-            this.History.push(history)
+            if (force) {
+                spawnSync('rm', ['-rf', history.resPath])
+            } else {
+                fs.renameSync(history.resPath, history.trashPath)
+                this.History.push(history)
+            }
+        } else if (force) {
+            await this._batchForceRemoveImage(_ws, image, count)
         } else {
             await this._batchRemoveImage(_ws, image, count)
         }
+    }
+    private async _batchForceRemoveImage(
+        { path }: Workspace,
+        image: string,
+        count: number,
+    ) {
+        const partList = image.split('/')
+        const imageName = partList.pop()
+        const resFolderPath = `${path}/${partList.join('/')}`
+        const imageFolder = partList.pop()
+
+        /** 图片列表 */
+        const imageList = fs.readdirSync(resFolderPath).filter(item => {
+            if (item[0] === '.') {
+                return false
+            }
+            const fullPath = `${resFolderPath}/${item}`
+            const stat = fs.statSync(fullPath)
+            return stat.isFile()
+        })
+        const idx = imageList.findIndex(item => item === imageName)
+        if (idx === -1) {
+            return
+        }
+
+        /** 创建临时目录 */
+        const trashFolderName = `${Date.now()}-${imageFolder}`
+        const tmpFolderPath = `${resFolderPath}/._${trashFolderName}`
+        this.logger.debug('Create Temp Dir:', tmpFolderPath)
+        fs.mkdirSync(tmpFolderPath, { recursive: true })
+
+        /** 移动到临时目录 */
+        const start = Math.max(0, idx - count + 1)
+        const end = idx + 1
+        const tarImageList = imageList.slice(start, end)
+        const removeList: string[] = ['-rf']
+        for (const item of tarImageList) {
+            this.logger.debug('Remove File:', `${resFolderPath}/${item}`)
+            removeList.push(`${resFolderPath}/${item}`)
+        }
+
+        spawnSync('rm', removeList)
     }
     private async _batchRemoveImage(
         { path, trash }: Workspace,
@@ -355,7 +404,7 @@ export class ImagesService {
     }
     // MARK: 预览图片
     async previewImage({ workspace, image }: PreviewImageQueryDto) {
-        const _ws = this.workspace.get(workspace)
+        const _ws = this.workspace.getWorkspace(workspace)
         const stat = this._checkResource(_ws.path, image)
         if (!stat.isFile()) {
             return

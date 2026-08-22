@@ -177,15 +177,21 @@ async function backFolder() {
     await listImage(_folder, true)
 }
 // MARK: 删除目录
-async function removeFolder() {
+async function removeFolder({ force }: { force?: boolean } = {}) {
     if (!folder.value) {
         return
+    } else if (force) {
+        const isConfirm = await forceOperationConfirm()
+        if (!isConfirm) {
+            return
+        }
     }
 
     await apis.Images.removeImage(
         {
             workspace: Store.Workspace,
             image: folder.value,
+            force: force,
         },
         { notify: '删除成功' },
     )
@@ -227,6 +233,22 @@ async function batchOperationConfirm() {
     try {
         await ElMessageBox.confirm('确定是否删除?', {
             title: '批量删除',
+            confirmButtonType: 'danger',
+            center: true,
+            showClose: false,
+        })
+        return true
+    } catch (e) {
+        ElMessage.closeAll()
+        ElMessage.info('用户取消操作')
+        return false
+    }
+}
+// MARK: 强制删除确认
+async function forceOperationConfirm() {
+    try {
+        await ElMessageBox.confirm('确定是否删除?', {
+            title: '强制删除',
             confirmButtonType: 'danger',
             center: true,
             showClose: false,

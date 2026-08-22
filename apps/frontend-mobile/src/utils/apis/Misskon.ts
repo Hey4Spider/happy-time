@@ -13,6 +13,7 @@
 import {
   ListMisskonParams,
   ListMisskonTagParams,
+  RespMisskon,
   RespMisskonTag,
   UpdateMisskonDto,
   UpdateMisskonParams,
@@ -79,7 +80,7 @@ export class Misskon<SecurityDataType = unknown> {
     this.http.request<
       {
         total: number;
-        list: RespMisskonTag[];
+        list: RespMisskon[];
       },
       any
     >({

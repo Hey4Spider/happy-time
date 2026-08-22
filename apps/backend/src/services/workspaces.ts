@@ -1,21 +1,38 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+    BadRequestException,
+    Injectable,
+    NotFoundException,
+    OnModuleInit,
+} from '@nestjs/common'
 import * as fs from 'node:fs'
-import { NestLogger, Workspace, WorkspaceList } from '@/utils'
-import { objListToMap } from '@shared'
+import { Database, NestLogger, Workspace } from '@/utils'
+import { CreateWorkspaceDto, UpdateWorkspaceDto } from '@/dtos'
 
 @Injectable()
-export class WorkspacesService {
-    private readonly WorkspaceMap!: Recordable<Workspace>
+export class WorkspacesService implements OnModuleInit {
+    private readonly WorkspaceMap: Recordable<Workspace> = {}
 
-    constructor(private readonly logger: NestLogger) {
+    constructor(
+        private readonly logger: NestLogger,
+        private readonly db: Database,
+    ) {
         this.logger.setCategory(WorkspacesService.name)
-        this.WorkspaceMap = objListToMap(WorkspaceList, 'key')
+    }
+
+    async onModuleInit() {
+        const list = await this.db.workspace.findMany()
+        for (const item of list) {
+            this.WorkspaceMap[item.key] = item
+        }
     }
 
     listWorkspace() {
+        const list = Object.values(this.WorkspaceMap).sort((a, b) =>
+            a.key > b.key ? 1 : -1,
+        )
         return {
-            total: WorkspaceList.length,
-            list: WorkspaceList.map(item => {
+            total: list.length,
+            list: list.map(item => {
                 let isActive = false
                 try {
                     fs.statSync(item.path)
@@ -33,8 +50,18 @@ export class WorkspacesService {
         }
     }
 
-    get(key: string) {
-        const data = this._get(key)
+    getWorkspace(
+        key: string,
+        { checkActive = true }: { checkActive?: boolean } = {},
+    ) {
+        const data = this.WorkspaceMap[key]
+        if (!data) {
+            throw new NotFoundException(`Workspace '${key}' not found`)
+        }
+        if (!checkActive) {
+            return data
+        }
+
         try {
             fs.statSync(data.path)
             data.isActive = true
@@ -44,11 +71,39 @@ export class WorkspacesService {
         return data
     }
 
-    private _get(key: string) {
-        const workspace = this.WorkspaceMap[key]
-        if (!workspace) {
-            throw new NotFoundException(`Workspace '${key}' not found`)
+    async createWorkspace(body: CreateWorkspaceDto) {
+        if (this.WorkspaceMap[body.key]) {
+            throw new BadRequestException(
+                `Workspace '${body.key}' already exist`,
+            )
         }
-        return workspace
+        const data = await this.db.workspace.create({
+            data: body,
+        })
+        this.WorkspaceMap[body.key] = data
+        return data
+    }
+
+    async updateWorkspace(key: string, body: UpdateWorkspaceDto) {
+        this.getWorkspace(key, {
+            checkActive: false,
+        })
+        const data = await this.db.workspace.update({
+            where: { key },
+            data: body,
+        })
+        this.WorkspaceMap[key] = data
+        return data
+    }
+
+    async removeWorkspace(key: string) {
+        this.getWorkspace(key, {
+            checkActive: false,
+        })
+
+        await this.db.workspace.delete({
+            where: { key },
+        })
+        delete this.WorkspaceMap[key]
     }
 }

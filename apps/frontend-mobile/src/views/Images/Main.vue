@@ -3,14 +3,14 @@
         <ElButton type="success" size="small" @click="onChangeFolder('prev')">
             上一组
         </ElButton>
-        <ElButton
-            class="op-remove"
-            size="small"
-            type="danger"
+        <ButtonLongPress
+            :data="{ force: true }"
+            :button-attrs="ButtonAttrs"
             @click="onFolderRemove"
+            @long-press="onFolderRemove"
         >
             删除目录
-        </ElButton>
+        </ButtonLongPress>
         <ElButton type="success" size="small" @click="onChangeFolder('next')">
             下一组
         </ElButton>
@@ -58,7 +58,7 @@ defineProps<{
 }>()
 const emits = defineEmits<{
     remove: [item: RespResource, index: number, count?: number]
-    removeFolder: []
+    removeFolder: [data?: { force?: boolean }]
     changeFolder: [type: 'prev' | 'next']
 }>()
 const refScrollbar = useTemplateRef('refScrollbar')
@@ -99,8 +99,8 @@ defineExpose({
     scrollToTop,
 })
 
-function onFolderRemove() {
-    emits('removeFolder')
+function onFolderRemove(data?: { force?: boolean }) {
+    emits('removeFolder', data)
 }
 
 function onChangeFolder(type: 'prev' | 'next') {

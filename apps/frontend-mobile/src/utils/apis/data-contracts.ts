@@ -85,6 +85,13 @@ export interface UpdateMisskonTagDto {
   like: number;
 }
 
+export interface RespMisskon {
+  id: number;
+  name: string;
+  key: string;
+  link: string;
+}
+
 export interface UpdateMisskonDto {
   status?: ResourceStatus;
 }
@@ -105,6 +112,7 @@ export interface ListImageParams {
 export interface RemoveImageParams {
   workspace: string;
   image: string;
+  force?: boolean;
   /** @default 1 */
   count?: number;
 }

@@ -17,6 +17,9 @@ export default defineConfig({
     optimizeDeps: {
         include: ['@element-plus/icons-vue'],
     },
+    server: {
+        port: 5174,
+    },
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),

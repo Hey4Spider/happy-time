@@ -90,7 +90,7 @@ onMounted(async () => {
 async function listWorkspace() {
     const {
         data: { list },
-    } = await apis.Images.listWorkspace()
+    } = await apis.Workspaces.listWorkspace()
     workspaceList.value = list
 
     let isActive = false

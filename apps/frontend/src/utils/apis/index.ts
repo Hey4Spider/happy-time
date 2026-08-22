@@ -3,6 +3,7 @@ import { ApiConfig, HttpClient } from './http-client'
 import { AxiosError } from 'axios'
 import { Images } from './Images'
 import { Misskon } from './Misskon'
+import { Workspaces } from './Workspaces'
 
 export * from './data-contracts'
 
@@ -17,6 +18,7 @@ export class Apis<
 
     readonly Images!: Images
     readonly Misskon!: Misskon
+    readonly Workspaces!: Workspaces
 
     constructor(options: ApiConfig<SecurityDataType> = {}) {
         super(options)

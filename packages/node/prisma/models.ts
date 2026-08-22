@@ -10,4 +10,5 @@
  */
 export type * from './models/Misskon'
 export type * from './models/MisskonTag'
+export type * from './models/Workspace'
 export type * from './commonInputTypes'

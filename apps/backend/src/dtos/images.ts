@@ -1,4 +1,4 @@
-import { IsEnumData, IsIntData, IsNotEmptyString } from '@/utils'
+import { IsBooleanData, IsEnumData, IsIntData, IsNotEmptyString } from '@/utils'
 import { DirectionCategory, ImageType, WorkspaceOperation } from '@shared'
 import { UploadFileDto } from './utils'
 import { Transform } from 'class-transformer'
@@ -45,6 +45,9 @@ export class PreviewImageQueryDto extends PickType(ListImageQueryDto, [
 }
 
 export class RemoveImageQueryDto extends PreviewImageQueryDto {
+    @IsBooleanData()
+    force?: boolean
+
     @IsIntData({ min: 1 }, { swagger: { default: 1 } })
     count?: number
 }

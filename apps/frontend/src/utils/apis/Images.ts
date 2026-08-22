@@ -17,7 +17,6 @@ import {
   PreviewImageParams,
   RemoveImageParams,
   RespResource,
-  RespWorkspace,
 } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
@@ -61,26 +60,6 @@ export class Images<SecurityDataType = unknown> {
       path: `/api/v1/images`,
       method: "DELETE",
       query: query,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Images
-   * @name ListWorkspace
-   * @request GET:/api/v1/images/workspaces
-   */
-  listWorkspace = (params: RequestParams = {}) =>
-    this.http.request<
-      {
-        total: number;
-        list: RespWorkspace[];
-      },
-      any
-    >({
-      path: `/api/v1/images/workspaces`,
-      method: "GET",
-      format: "json",
       ...params,
     });
   /**

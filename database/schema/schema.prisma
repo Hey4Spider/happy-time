@@ -37,3 +37,12 @@ model MisskonTag {
   @@index([like])
   @@map("misskon_tag")
 }
+
+model Workspace {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  path  String
+  trash String
+
+  @@map("workspace")
+}

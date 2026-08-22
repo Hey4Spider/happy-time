@@ -17,6 +17,7 @@
                 @remove="onRemove"
                 @remove-folder="removeFolder"
                 @change-folder="changeFolder"
+                @clear="onClear"
             />
         </ElMain>
     </ElContainer>
@@ -40,6 +41,7 @@ import {
     ResourceType,
     RespResource,
     RespWorkspace,
+    WorkspaceOperation,
 } from '@/utils'
 import router from '@/router'
 import { useRoute } from 'vue-router'
@@ -271,6 +273,24 @@ async function onFolderClick(value?: string) {
     }
     router.push({ hash })
     await listImage(value, true)
+}
+
+async function onClear() {
+    const isConfirm = await forceOperationConfirm()
+    if (!isConfirm) {
+        return
+    }
+
+    await apis.Images.operateWorkspcae(
+        {
+            operation: WorkspaceOperation.Clear,
+            workspace: Store.Workspace,
+            folder: folder.value,
+        },
+        {
+            notify: '删除成功',
+        },
+    )
 }
 
 watch(folder, folder => listImage(folder))

@@ -16,7 +16,11 @@
         </ElButton>
     </div>
 
-    <ElScrollbar ref="refScrollbar" height="calc(100svh - 100px)">
+    <ElScrollbar
+        ref="refScrollbar"
+        height="calc(100svh - 100px)"
+        v-if="list.length"
+    >
         <div v-for="(item, index) of list" :key="item.path">
             <div class="image-header">
                 <div class="image-name text-ellipsis">
@@ -34,6 +38,10 @@
             <ComLazyImage :data="item" :scrollbar-wrap="refScrollbarWrap" />
         </div>
     </ElScrollbar>
+
+    <div v-else class="flex-center global-operation">
+        <ElButton type="danger" @click="onClear">清空回收站</ElButton>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -60,6 +68,7 @@ const emits = defineEmits<{
     remove: [item: RespResource, index: number, count?: number]
     removeFolder: [data?: { force?: boolean }]
     changeFolder: [type: 'prev' | 'next']
+    clear: []
 }>()
 const refScrollbar = useTemplateRef('refScrollbar')
 const refScrollbarWrap = ref<HTMLDivElement>()
@@ -102,6 +111,10 @@ async function onRevoke() {
         notify: '撤销成功',
     })
 }
+
+function onClear() {
+    emits('clear')
+}
 </script>
 
 <style scoped lang="scss">
@@ -122,5 +135,8 @@ async function onRevoke() {
     height: 50px;
     padding: 0 20px;
     border-bottom: var(--el-border);
+}
+.global-operation {
+    margin-top: 10px;
 }
 </style>

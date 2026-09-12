@@ -29,7 +29,8 @@
         "paths": {
             "@/*": ["./src/*"],
             "@com/*": ["./src/components/*"],
-            "@shared": ["../../packages/shared/index"]
+            "@shared": ["../../packages/shared/index"],
+            "@apis": ["../../packages/shared/apis/index"]
         }
     }
 }

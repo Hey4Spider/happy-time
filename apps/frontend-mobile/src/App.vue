@@ -33,7 +33,7 @@ async function onSubmit() {
     })
     if (data.status) {
         isPassed.value = data.status
-        localStorage.setItem('IS_PASS', 'true')
+        localStorage.setItem('IS_PASSED', 'true')
     } else {
         ElNotification.error('密码错误')
     }

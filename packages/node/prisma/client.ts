@@ -49,3 +49,8 @@ export type Misskon = Prisma.MisskonModel
  * 
  */
 export type MisskonTag = Prisma.MisskonTagModel
+/**
+ * Model Workspace
+ * 
+ */
+export type Workspace = Prisma.WorkspaceModel

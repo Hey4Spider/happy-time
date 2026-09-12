@@ -65,7 +65,6 @@ import { useStore } from './store.js'
 interface ResourceItem extends RespResource {
     prev?: ResourceItem
     next?: ResourceItem
-    children: ResourceItem[]
 }
 
 const store = useStore()
@@ -90,7 +89,7 @@ onMounted(async () => {
 async function listWorkspace() {
     const {
         data: { list },
-    } = await apis.Images.listWorkspace()
+    } = await apis.Workspaces.listWorkspace()
     workspaceList.value = list
 
     let isActive = false
@@ -152,7 +151,6 @@ async function listParentFolder(folder?: string) {
             ...item,
             prev: prevResource,
             next: undefined,
-            children: [],
         }
         if (prevResource) {
             prevResource.next = currResource

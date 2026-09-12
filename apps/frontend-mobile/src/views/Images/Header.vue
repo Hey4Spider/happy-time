@@ -18,9 +18,7 @@
     </ElSelect>
 
     <div v-if="count">图片数量: {{ count }}</div>
-    <div v-else-if="folderList.length >= 0">
-        目录数量: {{ folderList.length }}
-    </div>
+    <div v-else>目录数量: {{ folderList.length }}</div>
 
     <div class="flex-center operation">
         <ElIcon size="24" @click="showFolder"><Menu /></ElIcon>
@@ -44,7 +42,6 @@ import { nextTick, ref, watch } from 'vue'
 const emits = defineEmits<{
     workspace: [value: string]
     folder: [value?: string]
-    // remove: []
     back: []
 }>()
 const props = defineProps<{
@@ -77,22 +74,10 @@ function onBack() {
     emits('back')
 }
 
-// function onRemove() {
-//     emits('remove')
-// }
-
 watch(
-    () => props.folderList.length,
-    value => {
-        if (value > 0 && props.count === 0) {
-            show.value = true
-        }
-    },
-)
-watch(
-    () => props.count,
-    value => {
-        if (value === 0 && props.folderList.length > 0) {
+    () => [props.folderList.length, props.count] as const,
+    ([folderCount, count]) => {
+        if (folderCount > 0 && !count) {
             show.value = true
         }
     },
@@ -109,8 +94,5 @@ watch(
 }
 .operation {
     margin-left: auto;
-}
-.op-remove {
-    margin-right: 10px;
 }
 </style>

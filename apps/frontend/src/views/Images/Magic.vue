@@ -1,9 +1,16 @@
 <template>
-    <ElDialog v-model="show" title="批量删除" @close="onClose">
+    <ElDialog
+        v-model="show"
+        title="批量删除"
+        :show-close="false"
+        @close="onClose"
+        @opened="onOpen"
+    >
         <ElForm :model="form" label-width="70">
             <ElFormItem label="删除至" prop="to">
                 <ElSelect
                     v-model="form.to"
+                    ref="refSelect"
                     :disabled="!!form.count"
                     clearable
                     placeholder="请选择删除到某个资源"
@@ -50,7 +57,7 @@ import {
     ElOption,
     ElSelect,
 } from 'element-plus'
-import { reactive, ref, shallowRef } from 'vue'
+import { nextTick, reactive, ref, shallowRef, useTemplateRef } from 'vue'
 
 const props = defineProps<{
     list: RespResource[]
@@ -59,6 +66,7 @@ const emits = defineEmits<{
     batch: [item: RespResource, index: number, count: number]
 }>()
 
+const refSelect = useTemplateRef('refSelect')
 const show = ref(false)
 const _index = ref(0)
 const _list = shallowRef<RespResource[]>([])
@@ -72,6 +80,11 @@ function open(index: number) {
     show.value = true
     _index.value = index
     _initList()
+}
+
+async function onOpen() {
+    await nextTick()
+    refSelect.value?.focus()
 }
 
 function onFilter(value: string) {
@@ -110,7 +123,7 @@ function onClose() {
 }
 
 function _initList() {
-    _list.value = [...props.list.slice(0, _index.value + 1)]
+    _list.value = [...props.list]
 }
 
 defineExpose({

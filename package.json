@@ -13,7 +13,8 @@
         "backend": "npm run dev -w backend",
         "frontend": "npm run dev -w frontend",
         "frontend-mobile": "npm run dev -w frontend-mobile",
-        "tools": "npm start -w tools"
+        "tools": "npm start -w tools",
+        "apis": "swagger-typescript-api generate -p http://localhost:3333/api-json -o ./packages/shared/apis --axios --modular --module-name-index 2 --default-as-success --extract-request-body --extract-request-params --single-http-client --default-response=\"undefined\" && jiti ./tools/src/apis.ts"
     },
     "dependencies": {
         "@vueuse/core": "^14.3.0",
@@ -33,6 +34,7 @@
         "jiti": "^2.6.1",
         "prettier": "^3.8.3",
         "prisma": "^7.7.0",
+        "swagger-typescript-api": "^13.12.6",
         "ts-node": "^10.9.2",
         "tsconfig-paths": "^4.2.0",
         "typescript": "^6.0.3",

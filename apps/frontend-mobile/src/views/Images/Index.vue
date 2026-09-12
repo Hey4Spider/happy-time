@@ -17,6 +17,7 @@
                 @remove="onRemove"
                 @remove-folder="removeFolder"
                 @change-folder="changeFolder"
+                @clear="onClear"
             />
         </ElMain>
     </ElContainer>
@@ -40,15 +41,15 @@ import {
     ResourceType,
     RespResource,
     RespWorkspace,
-} from '@/utils/index.js'
-import router from '@/router/index.js'
+    WorkspaceOperation,
+} from '@/utils'
+import router from '@/router'
 import { useRoute } from 'vue-router'
 import { useGlobalStore } from '@/stores'
 
 interface ResourceItem extends RespResource {
     prev?: ResourceItem
     next?: ResourceItem
-    children: ResourceItem[]
 }
 
 const Store = useGlobalStore()
@@ -71,7 +72,7 @@ onMounted(async () => {
 async function listWorkspace() {
     const {
         data: { list },
-    } = await apis.Images.listWorkspace()
+    } = await apis.Workspaces.listWorkspace()
     workspaceList.value = list
 
     let isActive = false
@@ -133,7 +134,6 @@ async function listParentFolder(folder?: string) {
             ...item,
             prev: prevResource,
             next: undefined,
-            children: [],
         }
         if (prevResource) {
             prevResource.next = currResource
@@ -177,15 +177,21 @@ async function backFolder() {
     await listImage(_folder, true)
 }
 // MARK: 删除目录
-async function removeFolder() {
+async function removeFolder({ force }: { force?: boolean } = {}) {
     if (!folder.value) {
         return
+    } else if (force) {
+        const isConfirm = await forceOperationConfirm()
+        if (!isConfirm) {
+            return
+        }
     }
 
     await apis.Images.removeImage(
         {
             workspace: Store.Workspace,
             image: folder.value,
+            force: force,
         },
         { notify: '删除成功' },
     )
@@ -238,6 +244,22 @@ async function batchOperationConfirm() {
         return false
     }
 }
+// MARK: 强制删除确认
+async function forceOperationConfirm() {
+    try {
+        await ElMessageBox.confirm('确定是否删除?', {
+            title: '强制删除',
+            confirmButtonType: 'danger',
+            center: true,
+            showClose: false,
+        })
+        return true
+    } catch (e) {
+        ElMessage.closeAll()
+        ElMessage.info('用户取消操作')
+        return false
+    }
+}
 // MARK: 工作区变更
 async function onWorkspaceChange() {
     router.push({ hash: undefined })
@@ -253,15 +275,30 @@ async function onFolderClick(value?: string) {
     await listImage(value, true)
 }
 
+async function onClear() {
+    const isConfirm = await forceOperationConfirm()
+    if (!isConfirm) {
+        return
+    }
+
+    await apis.Images.operateWorkspcae(
+        {
+            operation: WorkspaceOperation.Clear,
+            workspace: Store.Workspace,
+            folder: folder.value,
+        },
+        {
+            notify: '删除成功',
+        },
+    )
+}
+
 watch(folder, folder => listImage(folder))
 </script>
 
 <style scoped lang="scss">
 .header {
     justify-content: flex-start;
-}
-.aside {
-    width: 280px;
 }
 .app-main {
     height: calc(100svh - 50px);

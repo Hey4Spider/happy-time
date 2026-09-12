@@ -1,9 +1,11 @@
-import * as path from 'path'
-import { fileURLToPath, URL } from 'node:url'
+import * as path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import { defineConfig, PluginOption } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
+
+const Dir = path.dirname(fileURLToPath(import.meta.url))
 
 const plugins: PluginOption[] = [vue()]
 if (process.env.VITE_DEV) {
@@ -13,20 +15,15 @@ if (process.env.VITE_DEV) {
 // https://vite.dev/config/
 export default defineConfig({
     plugins,
-    envDir: path.join(__dirname, '../../config/web'),
+    envDir: path.join(Dir, '../../config/web'),
     optimizeDeps: {
         include: ['@element-plus/icons-vue'],
     },
     server: {
         host: '0.0.0.0',
+        port: 5175,
     },
     resolve: {
-        alias: {
-            '@': fileURLToPath(new URL('./src', import.meta.url)),
-            '@com': fileURLToPath(new URL('./src/components', import.meta.url)),
-            '@shared': fileURLToPath(
-                new URL('../../packages/shared/index', import.meta.url),
-            ),
-        },
+        tsconfigPaths: true,
     },
 })

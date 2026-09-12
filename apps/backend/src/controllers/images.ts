@@ -5,7 +5,7 @@ import {
     PreviewImageQueryDto,
     RemoveImageQueryDto,
 } from '@/dtos'
-import { RespResource, RespWorkspace } from '@/responses'
+import { RespResource } from '@/responses'
 import { ImagesService } from '@/services'
 import { ApiResult, FileBody } from '@/utils'
 import {
@@ -28,12 +28,6 @@ export class ImagesController {
     @ApiResult({ type: RespResource, isList: true })
     async listImage(@Query() query: ListImageQueryDto) {
         return await this.service.listImage(query)
-    }
-
-    @Get('workspaces')
-    @ApiResult({ type: RespWorkspace, isList: true })
-    listWorkspace() {
-        return this.service.listWorkspace()
     }
 
     @Post('workspace')

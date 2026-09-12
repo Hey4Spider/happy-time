@@ -52,7 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Misskon: 'Misskon',
-  MisskonTag: 'MisskonTag'
+  MisskonTag: 'MisskonTag',
+  Workspace: 'Workspace'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -101,6 +102,16 @@ export const MisskonTagScalarFieldEnum = {
 } as const
 
 export type MisskonTagScalarFieldEnum = (typeof MisskonTagScalarFieldEnum)[keyof typeof MisskonTagScalarFieldEnum]
+
+
+export const WorkspaceScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  path: 'path',
+  trash: 'trash'
+} as const
+
+export type WorkspaceScalarFieldEnum = (typeof WorkspaceScalarFieldEnum)[keyof typeof WorkspaceScalarFieldEnum]
 
 
 export const SortOrder = {

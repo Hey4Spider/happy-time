@@ -13,6 +13,7 @@
 import {
   ListMisskonParams,
   ListMisskonTagParams,
+  RespMisskon,
   RespMisskonTag,
   UpdateMisskonDto,
   UpdateMisskonParams,
@@ -35,7 +36,10 @@ export class Misskon<SecurityDataType = unknown> {
    * @name ListMisskonTag
    * @request GET:/api/v1/misskon/tags
    */
-  listMisskonTag = (query: ListMisskonTagParams, params: RequestParams = {}) =>
+  listMisskonTag = (
+    query: ListMisskonTagParams = {},
+    params: RequestParams = {},
+  ) =>
     this.http.request<
       {
         total: number;
@@ -75,11 +79,11 @@ export class Misskon<SecurityDataType = unknown> {
    * @name ListMisskon
    * @request GET:/api/v1/misskon
    */
-  listMisskon = (query: ListMisskonParams, params: RequestParams = {}) =>
+  listMisskon = (query: ListMisskonParams = {}, params: RequestParams = {}) =>
     this.http.request<
       {
         total: number;
-        list: RespMisskonTag[];
+        list: RespMisskon[];
       },
       any
     >({

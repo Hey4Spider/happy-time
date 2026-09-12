@@ -49,13 +49,6 @@ export interface RespResource {
   size?: string;
 }
 
-export interface RespWorkspace {
-  key: string;
-  path: string;
-  trash: string;
-  isActive: boolean;
-}
-
 export interface OperateWorkspaceDto {
   workspace: string;
   folder?: string;
@@ -85,6 +78,13 @@ export interface UpdateMisskonTagDto {
   like: number;
 }
 
+export interface RespMisskon {
+  id: number;
+  name: string;
+  key: string;
+  link: string;
+}
+
 export interface UpdateMisskonDto {
   status?: ResourceStatus;
 }
@@ -97,6 +97,24 @@ export interface LoginDto {
   password: string;
 }
 
+export interface RespWorkspace {
+  key: string;
+  path: string;
+  trash: string;
+  isActive: boolean;
+}
+
+export interface CreateWorkspaceDto {
+  key: string;
+  path: string;
+  trash: string;
+}
+
+export interface UpdateWorkspaceDto {
+  path?: string;
+  trash?: string;
+}
+
 export interface ListImageParams {
   workspace: string;
   folder?: string;
@@ -105,6 +123,7 @@ export interface ListImageParams {
 export interface RemoveImageParams {
   workspace: string;
   image: string;
+  force?: boolean;
   /** @default 1 */
   count?: number;
 }
@@ -136,4 +155,16 @@ export interface ListMisskonParams {
 
 export interface UpdateMisskonParams {
   id: number;
+}
+
+export interface GetWorkspaceParams {
+  key: string;
+}
+
+export interface UpdateWorkspaceParams {
+  key: string;
+}
+
+export interface RemoveWorkspaceParams {
+  key: string;
 }

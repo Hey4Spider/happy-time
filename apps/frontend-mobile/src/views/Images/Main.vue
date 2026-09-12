@@ -3,20 +3,24 @@
         <ElButton type="success" size="small" @click="onChangeFolder('prev')">
             上一组
         </ElButton>
-        <ElButton
-            class="op-remove"
-            size="small"
-            type="danger"
-            @click="onFolderRemove"
-        >
-            删除目录
-        </ElButton>
+        <div>
+            <ElButton type="primary" size="small" @click="onRevoke">
+                撤销删除
+            </ElButton>
+            <ElButton type="danger" size="small" @click="onFolderRemove">
+                删除目录
+            </ElButton>
+        </div>
         <ElButton type="success" size="small" @click="onChangeFolder('next')">
             下一组
         </ElButton>
     </div>
 
-    <ElScrollbar ref="refScrollbar" height="calc(100svh - 100px)">
+    <ElScrollbar
+        ref="refScrollbar"
+        height="calc(100svh - 100px)"
+        v-if="list.length"
+    >
         <div v-for="(item, index) of list" :key="item.path">
             <div class="image-header">
                 <div class="image-name text-ellipsis">
@@ -34,12 +38,16 @@
             <ComLazyImage :data="item" :scrollbar-wrap="refScrollbarWrap" />
         </div>
     </ElScrollbar>
+
+    <div v-else class="flex-center global-operation">
+        <ElButton type="danger" @click="onClear">清空回收站</ElButton>
+    </div>
 </template>
 
 <script setup lang="ts">
 import ComLazyImage from './LazyImage.vue'
 import ButtonLongPress from '@/components/ButtonLongPress.vue'
-import { ImageItem, RespResource, VueProps } from '@/utils'
+import { apis, ImageItem, RespResource, VueProps } from '@/utils'
 import { ElButton, ElScrollbar } from 'element-plus'
 import { nextTick, onMounted, ref, useTemplateRef } from 'vue'
 
@@ -58,29 +66,17 @@ defineProps<{
 }>()
 const emits = defineEmits<{
     remove: [item: RespResource, index: number, count?: number]
-    removeFolder: []
+    removeFolder: [data?: { force?: boolean }]
     changeFolder: [type: 'prev' | 'next']
+    clear: []
 }>()
 const refScrollbar = useTemplateRef('refScrollbar')
 const refScrollbarWrap = ref<HTMLDivElement>()
-
-const ImageHeight = window.innerHeight - 100
 
 onMounted(async () => {
     await nextTick()
     refScrollbarWrap.value = refScrollbar.value?.wrapRef
 })
-
-function changeImage(type: 'next' | 'prev') {
-    const top = refScrollbar.value?.wrapRef?.scrollTop || 0
-    let idx = Math.floor(top / ImageHeight)
-    idx += type === 'next' ? 1 : -1
-    refScrollbar.value?.scrollTo({
-        left: 0,
-        top: Math.max(0, idx * ImageHeight),
-        behavior: 'instant',
-    })
-}
 
 function onRemove({ item, index }: ButtonData) {
     emits('remove', item, index)
@@ -95,12 +91,11 @@ function scrollToTop() {
 }
 
 defineExpose({
-    changeImage,
     scrollToTop,
 })
 
 function onFolderRemove() {
-    emits('removeFolder')
+    emits('removeFolder', { force: true })
 }
 
 function onChangeFolder(type: 'prev' | 'next') {
@@ -109,6 +104,16 @@ function onChangeFolder(type: 'prev' | 'next') {
 
 function onLongPress({ item, index }: ButtonData) {
     emits('remove', item, index, index + 1)
+}
+
+async function onRevoke() {
+    await apis.Images.revokeImage({
+        notify: '撤销成功',
+    })
+}
+
+function onClear() {
+    emits('clear')
 }
 </script>
 
@@ -130,5 +135,8 @@ function onLongPress({ item, index }: ButtonData) {
     height: 50px;
     padding: 0 20px;
     border-bottom: var(--el-border);
+}
+.global-operation {
+    margin-top: 10px;
 }
 </style>

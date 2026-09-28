@@ -6,6 +6,7 @@ import { objListToMap, ResourceStatus } from '@shared'
 
 const Axios = axios.create({
     baseURL: 'https://misskon.com',
+    timeout: 30_000,
     proxy: {
         protocol: 'http',
         host: '127.0.0.1',
@@ -17,8 +18,8 @@ export default newCommand('misskon', {
     description: '获取 Misskon 资源',
     action,
 })
-    .option('-s, --skip', '跳过多少项目', '0')
-    .option('-p, --page', '从第几页开始', '1')
+    .option('-s, --skip <skip>', '跳过多少项目', '0')
+    .option('-p, --page <page>', '从第几页开始', '1')
 
 async function action({
     skip = 0,

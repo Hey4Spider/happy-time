@@ -4,6 +4,7 @@ export enum ResourceType {
 }
 
 export enum ResourceStatus {
+    All = 0,
     Undownload = 1,
     Downloaded,
     CanDownload,

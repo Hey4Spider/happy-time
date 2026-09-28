@@ -14,7 +14,9 @@ import { WorkspacesService } from './services'
 async function bootstrap() {
     const app = await NestFactory.create<NestFastifyApplication>(
         AppModule,
-        new FastifyAdapter(),
+        new FastifyAdapter({
+            bodyLimit: Number.MAX_SAFE_INTEGER,
+        }),
         {
             bufferLogs: true,
             forceCloseConnections: true,
@@ -44,6 +46,9 @@ function initCors(app: NestFastifyApplication) {
 function initPipe(app: NestFastifyApplication) {
     app.register(FastifyMultipart, {
         attachFieldsToBody: true,
+        limits: {
+            fileSize: Number.MAX_SAFE_INTEGER,
+        },
     })
     app.useGlobalPipes(
         new ValidationPipe({

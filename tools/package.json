@@ -11,6 +11,7 @@
         "axios": "^1.17.0",
         "commander": "^15.0.0",
         "csvtojson": "^2.0.14",
-        "node-html-parser": "^7.1.0"
+        "node-html-parser": "^7.1.0",
+        "sql-formatter": "^15.9.0"
     }
 }

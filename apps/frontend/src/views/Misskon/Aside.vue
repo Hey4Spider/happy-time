@@ -3,17 +3,18 @@
         v-model="status"
         placeholder="下载状态"
         clearable
-        @change="onSelect"
+        @change="onStatusChange"
     >
         <ElOption
             v-for="item of StatusOptions"
             :key="item.value"
-            v-bind="item"
+            :label="item.label"
+            :value="item.value"
         />
     </ElSelect>
 
     <ElScrollbar class="scrollbar">
-        <ElMenu class="menu" :default-active="active" @select="onMenu">
+        <ElMenu class="menu" :default-active="active" @select="onMenuChange">
             <ElMenuItem
                 class="text-ellipsis"
                 v-for="item of data"
@@ -27,7 +28,6 @@
 </template>
 
 <script setup lang="ts">
-import { ResourceStatus } from '@shared'
 import {
     ElMenu,
     ElMenuItem,
@@ -35,37 +35,25 @@ import {
     ElScrollbar,
     ElSelect,
 } from 'element-plus'
-import { computed } from 'vue'
 import { StatusOptions } from './util'
-import { RespMisskonTag } from '@/utils'
-import { useRoute } from 'vue-router'
+import { ResourceStatus, RespMisskonTag } from '@/utils'
 
 const status = defineModel<ResourceStatus>('status')
-const props = defineProps<{
+defineProps<{
     data: RespMisskonTag[]
+    active: string
 }>()
 const emits = defineEmits<{
-    (e: 'status', status?: ResourceStatus): void
-    (e: 'menu', value: string): void
+    'status-change': [status?: ResourceStatus]
+    'menu-change': [name: string]
 }>()
-const route = useRoute()
 
-const active = computed(() => {
-    const def = props.data[0]?.name || ''
-    const hash = decodeURIComponent(route.hash || def).slice(1)
-    const item = props.data.find(item => item.name === hash)
-    if (item) {
-        return item.name
-    } else {
-        return def
-    }
-})
-
-function onSelect(value: ResourceStatus) {
-    emits('status', value)
+function onStatusChange(value = ResourceStatus.All) {
+    status.value = value
+    emits('status-change', value)
 }
-function onMenu(name: string) {
-    emits('menu', name)
+function onMenuChange(name: string) {
+    emits('menu-change', name)
 }
 </script>
 

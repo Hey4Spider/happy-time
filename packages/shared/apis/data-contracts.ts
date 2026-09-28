@@ -11,6 +11,7 @@
  */
 
 export enum ResourceStatus {
+  All = 0,
   Undownload = 1,
   Downloaded = 2,
   CanDownload = 3,
@@ -82,6 +83,8 @@ export interface RespMisskon {
   id: number;
   name: string;
   key: string;
+  status: 0 | 1 | 2 | 3 | 4 | 5;
+  url: string;
   link: string;
 }
 

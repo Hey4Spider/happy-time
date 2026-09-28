@@ -99,8 +99,9 @@ import {
     UploadUserFile,
 } from 'element-plus'
 import { VueDraggable } from 'vue-draggable-plus'
-import { apis, ContentType, DirectionCategory } from '@/utils'
+import { apis, DirectionCategory } from '@/utils'
 import { CloseBold } from '@element-plus/icons-vue'
+import { ContentType } from '@apis'
 
 interface FileItem {
     url: string
